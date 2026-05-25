@@ -15,13 +15,18 @@ export default function SiteFooter() {
           <a href="/analytics">Analytics</a>
           <a href="/trends">Trends</a>
           <a href="/results">Results</a>
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="https://kjnine.com/contact" rel="noreferrer" target="_blank">Contact</a>
         </nav>
 
         <div className="footerInfo">
-          <p>Data Source</p>
-          <span>試合結果・スコアデータを集計し、独自指標として可視化します。</span>
-          <a href="/analytics">
-            分析を見る
+          <p>Unofficial Data Service</p>
+          <span>
+            本サイトはB.LEAGUE公式サイトではありません。公開されている試合結果をもとに独自に集計・可視化しています。
+          </span>
+          <a href="/terms">
+            免責事項を見る
             <ArrowRight size={14} />
           </a>
         </div>
@@ -29,7 +34,7 @@ export default function SiteFooter() {
 
       <div className="footerBottom">
         <small>© NINES DATA ANALYZE</small>
-        <small>Stats are provided for reference and may differ from official records.</small>
+        <small>非公式サイトです。公式情報はB.LEAGUE公式サイトをご確認ください。</small>
       </div>
     </footer>
   );

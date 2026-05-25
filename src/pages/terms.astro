@@ -1,0 +1,109 @@
+---
+import SiteFooter from "../components/SiteFooter";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../components/StatsDashboard.css";
+
+const updatedAt = "2026年5月25日";
+---
+
+<BaseLayout title="利用規約・免責事項 | NINES DATA" description="NINES DATA ANALYZEの利用規約、免責事項、データ出典、非公式サイトであることについて説明します。">
+  <main class="legalPage">
+    <header class="siteHeader">
+      <a class="brand" href="/">
+        <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze.svg" />
+      </a>
+      <nav class="siteNav" aria-label="主要ナビゲーション">
+        <a href="/">Overview</a>
+        <a href="/teams">Teams</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/trends">Trends</a>
+        <a href="/results">Results</a>
+      </nav>
+      <a class="headerCta" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">お問い合わせ</a>
+      <button class="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">Menu</button>
+      <div class="mobileDrawer" id="mobile-drawer">
+        <div class="mobileDrawerTop">
+          <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze_wht.svg" />
+          <span>Menu</span>
+        </div>
+        <nav class="mobileDrawerNav" aria-label="モバイルナビゲーション">
+          <a href="/"><span>01</span>Overview</a>
+          <a href="/teams"><span>02</span>Teams</a>
+          <a href="/analytics"><span>03</span>Analytics</a>
+          <a href="/trends"><span>04</span>Trends</a>
+          <a href="/results"><span>05</span>Results</a>
+          <a href="/terms"><span>06</span>Terms</a>
+          <a href="/privacy"><span>07</span>Privacy</a>
+        </nav>
+        <a class="mobileDrawerContact" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">Contact</a>
+      </div>
+    </header>
+
+    <section class="legalHero">
+      <p class="eyebrow">Terms / Disclaimer</p>
+      <h1>利用規約・免責事項</h1>
+      <p>
+        NINES DATA ANALYZEをご利用いただく前に、本サイトの位置づけ、データの扱い、免責事項をご確認ください。
+      </p>
+    </section>
+
+    <section class="legalContent">
+      <article class="legalBlock">
+        <h2>本サイトの位置づけ</h2>
+        <p>
+          本サイトはB.LEAGUE公式サイトではありません。B.LEAGUE、各クラブ、その他関連団体から公認・提携・後援を受けたものではありません。
+        </p>
+        <p>
+          本サイトは、公開されている試合結果をもとに、独自に集計・可視化した非公式のデータ分析サイトです。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>データについて</h2>
+        <ul>
+          <li>本サイトでは、試合日、対戦カード、スコア、勝敗、得失点差、ホーム/アウェイ成績などを集計して表示します。</li>
+          <li>表示される勝率、総合指標、安定度、ホーム依存度などは本サイト独自の計算を含みます。</li>
+          <li>データの正確性、完全性、最新性を保証するものではありません。</li>
+          <li>公式記録、日程、順位、成績は必ずB.LEAGUE公式サイトまたは各クラブの公式発表をご確認ください。</li>
+        </ul>
+      </article>
+
+      <article class="legalBlock">
+        <h2>禁止事項</h2>
+        <ul>
+          <li>本サイトを利用して、第三者の権利を侵害する行為。</li>
+          <li>本サイトの表示内容を、B.LEAGUE公式情報または公認情報であるかのように表示・再配布する行為。</li>
+          <li>本サイトの運営を妨害する行為。</li>
+          <li>法令または公序良俗に反する行為。</li>
+        </ul>
+      </article>
+
+      <article class="legalBlock">
+        <h2>免責事項</h2>
+        <p>
+          本サイトの情報を利用したこと、または利用できなかったことにより生じたいかなる損害についても、運営者は責任を負いません。
+        </p>
+        <p>
+          本サイトの内容は予告なく変更、停止、削除する場合があります。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>お問い合わせ</h2>
+        <p>
+          本サイトに関するお問い合わせは、KJ9のお問い合わせページよりご連絡ください。
+        </p>
+        <p>
+          <a href="https://kjnine.com/contact" rel="noreferrer" target="_blank">https://kjnine.com/contact</a>
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>改定日</h2>
+        <p>制定・最終更新: {updatedAt}</p>
+      </article>
+    </section>
+
+    <SiteFooter />
+  </main>
+</BaseLayout>

@@ -1,0 +1,118 @@
+---
+import SiteFooter from "../components/SiteFooter";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import "../components/StatsDashboard.css";
+
+const updatedAt = "2026年5月25日";
+---
+
+<BaseLayout title="プライバシーポリシー | NINES DATA" description="NINES DATA ANALYZEのプライバシーポリシー、アクセスログ、Cookie、外部リンク、お問い合わせについて説明します。">
+  <main class="legalPage">
+    <header class="siteHeader">
+      <a class="brand" href="/">
+        <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze.svg" />
+      </a>
+      <nav class="siteNav" aria-label="主要ナビゲーション">
+        <a href="/">Overview</a>
+        <a href="/teams">Teams</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/trends">Trends</a>
+        <a href="/results">Results</a>
+      </nav>
+      <a class="headerCta" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">お問い合わせ</a>
+      <button class="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">Menu</button>
+      <div class="mobileDrawer" id="mobile-drawer">
+        <div class="mobileDrawerTop">
+          <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze_wht.svg" />
+          <span>Menu</span>
+        </div>
+        <nav class="mobileDrawerNav" aria-label="モバイルナビゲーション">
+          <a href="/"><span>01</span>Overview</a>
+          <a href="/teams"><span>02</span>Teams</a>
+          <a href="/analytics"><span>03</span>Analytics</a>
+          <a href="/trends"><span>04</span>Trends</a>
+          <a href="/results"><span>05</span>Results</a>
+          <a href="/terms"><span>06</span>Terms</a>
+          <a href="/privacy"><span>07</span>Privacy</a>
+        </nav>
+        <a class="mobileDrawerContact" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">Contact</a>
+      </div>
+    </header>
+
+    <section class="legalHero">
+      <p class="eyebrow">Privacy Policy</p>
+      <h1>プライバシーポリシー</h1>
+      <p>
+        NINES DATA ANALYZEにおける利用者情報の取り扱いについて説明します。本サイト内ではお問い合わせフォームを設置せず、お問い合わせはKJ9のお問い合わせページへリンクします。
+      </p>
+    </section>
+
+    <section class="legalContent">
+      <article class="legalBlock">
+        <h2>取得する情報</h2>
+        <p>
+          本サイトは、利用者が閲覧するだけで氏名、住所、メールアドレス等の個人情報を直接取得するものではありません。
+        </p>
+        <p>
+          サーバーの仕組み上、アクセス日時、IPアドレス、ブラウザ情報、参照元URLなどのアクセスログが記録される場合があります。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>利用目的</h2>
+        <ul>
+          <li>サイトの表示、保守、障害調査のため。</li>
+          <li>不正アクセスや迷惑行為の防止・調査のため。</li>
+          <li>サイト改善の参考にするため。</li>
+        </ul>
+      </article>
+
+      <article class="legalBlock">
+        <h2>Cookie・解析ツールについて</h2>
+        <p>
+          本サイトでは、利用状況の把握と改善のためにGoogle Analyticsを利用します。Google AnalyticsはCookie等を使用して、利用者のアクセス情報を収集する場合があります。
+        </p>
+        <p>
+          収集される情報は匿名のトラフィックデータであり、個人を直接特定するものではありません。Google Analyticsによるデータ収集・処理の仕組みは、Googleのポリシーをご確認ください。
+        </p>
+        <p>
+          ブラウザの設定によりCookieを無効化できますが、一部機能に影響する場合があります。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>第三者提供</h2>
+        <p>
+          法令に基づく場合を除き、取得した情報を本人の同意なく第三者へ提供することはありません。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>外部リンク</h2>
+        <p>
+          本サイトには、B.LEAGUE公式サイトやKJ9のお問い合わせページなど外部サイトへのリンクが含まれます。リンク先サイトでの個人情報の取り扱いは、各サイトの方針をご確認ください。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>お問い合わせ</h2>
+        <p>
+          本サイトに関するお問い合わせは、KJ9のお問い合わせページよりご連絡ください。お問い合わせ時に入力された情報は、リンク先サイトのプライバシーポリシーに従って取り扱われます。
+        </p>
+        <p>
+          <a href="https://kjnine.com/contact" rel="noreferrer" target="_blank">https://kjnine.com/contact</a>
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>改定</h2>
+        <p>
+          本ポリシーは、必要に応じて変更する場合があります。変更後の内容は本ページに掲載します。
+        </p>
+        <p>制定・最終更新: {updatedAt}</p>
+      </article>
+    </section>
+
+    <SiteFooter />
+  </main>
+</BaseLayout>

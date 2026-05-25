@@ -12,10 +12,42 @@ const {
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8KJ7QW5VHK"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-8KJ7QW5VHK");
+    </script>
     <title>{title}</title>
   </head>
   <body>
     <slot />
+    <script is:inline>
+      document.addEventListener("click", (event) => {
+        const button = event.target.closest(".menuButton");
+        const link = event.target.closest(".mobileDrawer a");
+
+        if (button) {
+          const isOpen = document.body.classList.toggle("drawerOpen");
+          button.setAttribute("aria-expanded", String(isOpen));
+        }
+
+        if (link) {
+          document.body.classList.remove("drawerOpen");
+          document.querySelectorAll(".menuButton").forEach((item) => item.setAttribute("aria-expanded", "false"));
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.body.classList.remove("drawerOpen");
+          document.querySelectorAll(".menuButton").forEach((item) => item.setAttribute("aria-expanded", "false"));
+        }
+      });
+    </script>
   </body>
 </html>
 

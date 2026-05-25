@@ -89,7 +89,7 @@ export function TeamsPage() {
       onDivisionChange={setSelectedDivision}
     >
       <section className="dataGrid twoColumns">
-        <DataPanel label="Home / Away" title="ホーム・アウェイ勝率">
+        <DataPanel label="Home / Away" title="ホーム・アウェイ勝率" description="ホーム開催時とアウェイ開催時の勝率を比較します。内弁慶型か、場所を問わず勝てるかを見られます。">
           <div className="chartBox">
             <Bar data={homeAwayData} options={chartOptions} />
           </div>
@@ -97,6 +97,7 @@ export function TeamsPage() {
         <div className="rankPanel">
           <p>Efficiency Ranking</p>
           <h2>得失点差ランキング</h2>
+          <small>総得点から総失点を引いた差です。大きいほど試合内容で相手を上回っている傾向があります。</small>
           {sortedTeams.map((team, index) => (
             <article className="rankItem" key={team.id}>
               <span>{String(index + 1).padStart(2, "0")}</span>
@@ -112,6 +113,7 @@ export function TeamsPage() {
           <div>
             <p>Team Matrix</p>
             <h2>詳細チームスタッツ</h2>
+            <small>勝率、平均得点、平均失点、HOME/AWAY成績を一覧で比較できます。</small>
           </div>
         </div>
         <div className="tableWrap">
@@ -214,12 +216,12 @@ export function TrendsPage() {
       onDivisionChange={setSelectedDivision}
     >
       <section className="dataGrid">
-        <DataPanel label="Win Rate Trend" title="上位チームの勝率推移">
+        <DataPanel label="Win Rate Trend" title="上位チームの勝率推移" description="選択シーズンの上位チームについて、過去シーズンの勝率変化を見ます。継続的な強さと急伸を判別できます。">
           <div className="chartBox">
             <Line data={trendData} options={chartOptions} />
           </div>
         </DataPanel>
-        <DataPanel label="Point Margin" title="選択シーズンの得失点差">
+        <DataPanel label="Point Margin" title="選択シーズンの得失点差" description="選択中のシーズン・ディビジョンで、どのチームが得失点面で優位かを比較します。">
           <div className="chartBox">
             <Bar data={marginData} options={chartOptions} />
           </div>
@@ -276,7 +278,7 @@ export function ResultsPage() {
       onDivisionChange={setSelectedDivision}
     >
       <section className="dataGrid twoColumns">
-        <DataPanel label="Score Compare" title="試合別スコア比較">
+        <DataPanel label="Score Compare" title="試合別スコア比較" description="直近試合ごとのHOME得点とAWAY得点を比較します。接戦、大差、ホーム優勢を見分けやすくします。">
           <div className="chartBox">
             <Bar data={scoreData} options={chartOptions} />
           </div>
@@ -284,6 +286,7 @@ export function ResultsPage() {
         <div className="rankPanel">
           <p>High Score Games</p>
           <h2>合計得点ランキング</h2>
+          <small>両チームの得点合計が高い試合です。ハイスコアゲームや攻撃的な展開を探せます。</small>
           {highScoreGames.map((game, index) => (
             <article className="rankItem" key={game.id}>
               <span>{String(index + 1).padStart(2, "0")}</span>
@@ -391,6 +394,11 @@ export function AnalyticsPage() {
       onDivisionChange={setSelectedDivision}
     >
       <section className="analysisCards">
+        <div className="analysisIntro">
+          <p>Composite Score</p>
+          <h2>総合スコア上位</h2>
+          <small>勝率、得失点差、直近フォーム、安定度を組み合わせた独自指標です。チームの総合的な状態をざっくり比較できます。</small>
+        </div>
         {profiles.slice(0, 4).map((profile, index) => (
           <article key={profile.team.id}>
             <span>{String(index + 1).padStart(2, "0")}</span>
@@ -404,12 +412,12 @@ export function AnalyticsPage() {
       </section>
 
       <section className="dataGrid">
-        <DataPanel label="Offense / Defense Map" title="攻撃・守備ポジション">
+        <DataPanel label="Offense / Defense Map" title="攻撃・守備ポジション" description="横軸が平均得点、縦軸が平均失点です。右に行くほど攻撃力が高く、上に行くほど失点が少ない見方です。">
           <div className="chartBox">
             <Scatter data={quadrantData} options={scatterOptions} />
           </div>
         </DataPanel>
-        <DataPanel label="Home Dependency" title="ホーム依存度">
+        <DataPanel label="Home Dependency" title="ホーム依存度" description="HOME勝率とAWAY勝率の差です。数値が大きいほどホーム環境への依存が強い可能性があります。">
           <div className="chartBox">
             <Bar data={dependencyData} options={chartOptions} />
           </div>
@@ -417,7 +425,7 @@ export function AnalyticsPage() {
       </section>
 
       <section className="dataGrid oneWide">
-        <DataPanel label="Form / Stability" title="直近フォームと安定度">
+        <DataPanel label="Form / Stability" title="直近フォームと安定度" description="直近フォームは直近5試合の勝利割合、安定度は得失点差とホーム依存度をもとにした独自指標です。">
           <div className="chartBox">
             <Bar data={formData} options={chartOptions} />
           </div>
@@ -429,6 +437,7 @@ export function AnalyticsPage() {
           <div>
             <p>Analysis Matrix</p>
             <h2>多角指標マトリクス</h2>
+            <small>総合、攻撃、守備、勝率、ホーム依存、直近フォーム、安定度を同じ表で比較できます。</small>
           </div>
         </div>
         <div className="tableWrap">
@@ -503,9 +512,10 @@ function PageFrame({
           詳細データ
           <ArrowRight size={14} />
         </a>
-        <button className="menuButton" aria-label="メニュー">
+        <button className="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
           <Menu size={22} />
         </button>
+        <MobileDrawer />
       </header>
 
       <section className="pageHero">
@@ -535,6 +545,30 @@ function PageFrame({
   );
 }
 
+function MobileDrawer() {
+  return (
+    <div className="mobileDrawer" id="mobile-drawer">
+      <div className="mobileDrawerTop">
+        <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze_wht.svg" />
+        <span>Menu</span>
+      </div>
+      <nav className="mobileDrawerNav" aria-label="モバイルナビゲーション">
+        <a href="/"><span>01</span>Overview</a>
+        <a href="/teams"><span>02</span>Teams</a>
+        <a href="/analytics"><span>03</span>Analytics</a>
+        <a href="/trends"><span>04</span>Trends</a>
+        <a href="/results"><span>05</span>Results</a>
+        <a href="/terms"><span>06</span>Terms</a>
+        <a href="/privacy"><span>07</span>Privacy</a>
+      </nav>
+      <a className="mobileDrawerContact" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">
+        Contact
+        <ArrowRight size={18} />
+      </a>
+    </div>
+  );
+}
+
 function DivisionSwitch({
   activeDivision,
   onDivisionChange,
@@ -559,13 +593,24 @@ function DivisionSwitch({
   );
 }
 
-function DataPanel({ label, title, children }: { label: string; title: string; children: React.ReactNode }) {
+function DataPanel({
+  label,
+  title,
+  description,
+  children,
+}: {
+  label: string;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
     <article className="chartPanel">
       <div className="panelHeader">
         <div>
           <p>{label}</p>
           <h2>{title}</h2>
+          {description ? <small>{description}</small> : null}
         </div>
       </div>
       {children}

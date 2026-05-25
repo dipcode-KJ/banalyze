@@ -138,9 +138,10 @@ export default function StatsDashboard() {
           詳細データ
           <ArrowRight size={14} />
         </a>
-        <button className="menuButton" aria-label="メニュー">
+        <button className="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
           <Menu size={22} />
         </button>
+        <MobileDrawer />
       </header>
 
       <section className="hero">
@@ -225,6 +226,7 @@ export default function StatsDashboard() {
             <div>
               <p>Win Rate</p>
               <h2>チーム勝率</h2>
+              <small>勝利数を総試合数で割った割合です。高いほど安定して勝っているチームとして見られます。</small>
             </div>
             <span>{selectedSeason} / {selectedDivision}</span>
           </div>
@@ -238,6 +240,7 @@ export default function StatsDashboard() {
             <div>
               <p>Point Margin</p>
               <h2>得失点差推移</h2>
+              <small>総得点から総失点を引いた値です。勝敗だけでは見えない試合内容の優位性を確認できます。</small>
             </div>
             <span>{selectedSeason} / {selectedDivision}</span>
           </div>
@@ -253,6 +256,7 @@ export default function StatsDashboard() {
             <div>
               <p>Season Trend</p>
               <h2>勝率トップチームの過去推移</h2>
+              <small>現在のトップチームが過去シーズンでも強かったのか、単年で伸びたのかを見るグラフです。</small>
             </div>
             <span>{leader.shortName}</span>
           </div>
@@ -274,6 +278,7 @@ export default function StatsDashboard() {
           <div>
             <p>Standings</p>
             <h2>チーム別成績</h2>
+            <small>勝敗、勝率、HOME/AWAY、直近5試合をまとめた基本順位表です。</small>
           </div>
         </div>
         <div className="tableWrap">
@@ -330,6 +335,7 @@ export default function StatsDashboard() {
           <div>
             <p>Recent Results</p>
             <h2>最新試合結果</h2>
+            <small>選択したシーズン・ディビジョンの直近試合を、日付・スコア・会場で確認できます。</small>
           </div>
         </div>
         <div className="gameList">
@@ -348,8 +354,42 @@ export default function StatsDashboard() {
           ))}
         </div>
       </section>
+      <section className="noticeBand" aria-label="サイト利用上の注意">
+        <div>
+          <p>Unofficial Notice</p>
+          <h2>B.LEAGUE公式サイトではありません。</h2>
+        </div>
+        <p>
+          本サイトは公開されている試合結果をもとに独自に集計・可視化した非公式の分析サイトです。
+          データの正確性・完全性は保証しません。公式情報はB.LEAGUE公式サイトをご確認ください。
+        </p>
+      </section>
       <SiteFooter />
     </main>
+  );
+}
+
+function MobileDrawer() {
+  return (
+    <div className="mobileDrawer" id="mobile-drawer">
+      <div className="mobileDrawerTop">
+        <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze_wht.svg" />
+        <span>Menu</span>
+      </div>
+      <nav className="mobileDrawerNav" aria-label="モバイルナビゲーション">
+        <a href="/"><span>01</span>Overview</a>
+        <a href="/teams"><span>02</span>Teams</a>
+        <a href="/analytics"><span>03</span>Analytics</a>
+        <a href="/trends"><span>04</span>Trends</a>
+        <a href="/results"><span>05</span>Results</a>
+        <a href="/terms"><span>06</span>Terms</a>
+        <a href="/privacy"><span>07</span>Privacy</a>
+      </nav>
+      <a className="mobileDrawerContact" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">
+        Contact
+        <ArrowRight size={18} />
+      </a>
+    </div>
   );
 }
 
