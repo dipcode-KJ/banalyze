@@ -1,0 +1,37 @@
+---
+const {
+  title = "NINES DATA | Bリーグ統計ダッシュボード",
+  description = "Bリーグの試合結果を収集し、勝率・得失点差・ホーム/アウェイ成績を可視化する統計サービスです。",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family:
+      "Noto Sans JP", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    background: #ffffff;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+  }
+</style>

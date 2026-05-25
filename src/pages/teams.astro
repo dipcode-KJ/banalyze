@@ -1,0 +1,8 @@
+---
+import { TeamsPage } from "../components/StatsPages";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Teams | NINES DATA" description="Bリーグのチーム別勝率、得失点差、ホーム/アウェイ成績を確認できます。">
+  <TeamsPage client:load />
+</BaseLayout>

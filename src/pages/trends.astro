@@ -1,0 +1,8 @@
+---
+import { TrendsPage } from "../components/StatsPages";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Trends | NINES DATA" description="Bリーグの過去シーズン推移、勝率変化、得失点差傾向を確認できます。">
+  <TrendsPage client:load />
+</BaseLayout>

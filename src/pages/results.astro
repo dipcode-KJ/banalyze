@@ -1,0 +1,8 @@
+---
+import { ResultsPage } from "../components/StatsPages";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Results | NINES DATA" description="Bリーグの試合結果、スコア比較、合計得点ランキングを確認できます。">
+  <ResultsPage client:load />
+</BaseLayout>

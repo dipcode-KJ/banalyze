@@ -1,0 +1,8 @@
+---
+import { AnalyticsPage } from "../components/StatsPages";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Analytics | NINES DATA" description="Bリーグの攻撃力、守備力、ホーム依存度、直近フォーム、安定度を多角的に確認できます。">
+  <AnalyticsPage client:load />
+</BaseLayout>
