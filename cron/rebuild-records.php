@@ -71,11 +71,10 @@ INSERT INTO team_daily_records (
   :home_wins, :home_losses, :away_wins, :away_losses
 )
 SQL);
-        $stmt->execute([
+        $stmt->execute(array_merge([
             'team_id' => $teamId,
             'season' => $season,
             'record_date' => $recordDate,
-            ...$record,
-        ]);
+        ], $record));
     }
 }

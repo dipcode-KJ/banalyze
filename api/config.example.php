@@ -2,12 +2,12 @@
 
 return [
     'db' => [
-        'host' => 'localhost',
-        'port' => 3306,
-        'socket' => null,
-        'name' => 'your_database_name',
-        'user' => 'your_database_user',
-        'pass' => 'your_database_password',
+        'host' => '127.0.0.1',
+        'port' => '',
+        'socket' => '',
+        'name' => 'xskjnine5611_ninesdataanalyze',
+        'user' => 'xskjnine5611_kj9',
+        'pass' => 'ninesData_5611',
         'charset' => 'utf8mb4',
     ],
 ];

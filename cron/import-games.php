@@ -299,29 +299,39 @@ INSERT INTO team_daily_records (
   :home_wins, :home_losses, :away_wins, :away_losses
 )
 SQL);
-        $stmt->execute([
+        $stmt->execute(array_merge([
             'team_id' => $teamId,
             'season' => $season,
             'record_date' => $recordDate,
-            ...$record,
-        ]);
+        ], $record));
     }
 }
 
 function http_get(string $url): string
 {
-    $context = stream_context_create([
-        'http' => [
-            'header' => "User-Agent: NINES-DATA-ANALYZE/0.1\r\n",
-            'timeout' => 20,
-        ],
-    ]);
-    $body = file_get_contents($url, false, $context);
-    if ($body === false) {
-        throw new RuntimeException('Failed to fetch: ' . $url);
+    $lastError = null;
+
+    for ($attempt = 1; $attempt <= 4; $attempt++) {
+        $context = stream_context_create([
+            'http' => [
+                'header' => "User-Agent: NINES-DATA-ANALYZE/0.1\r\n",
+                'timeout' => 20,
+            ],
+        ]);
+        $body = @file_get_contents($url, false, $context);
+
+        if ($body !== false) {
+            return $body;
+        }
+
+        $lastError = error_get_last()['message'] ?? 'unknown error';
+        if ($attempt < 4) {
+            echo sprintf("[%s] Retry %d/3 fetch failed: %s\n", date('c'), $attempt, $url);
+            sleep($attempt * 2);
+        }
     }
 
-    return $body;
+    throw new RuntimeException('Failed to fetch: ' . $url . ' (' . $lastError . ')');
 }
 
 function text(DOMXPath $xpath, string $query, DOMNode $context): string
