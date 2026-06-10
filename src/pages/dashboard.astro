@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StatsDashboard from "../components/StatsDashboard";
+
+const title = "Dashboard | NINES ANALYZE";
+const description = "Bリーグの試合結果を収集し、勝率・得失点差・ホーム/アウェイ成績を可視化する全体ダッシュボードです。";
+---
+
+<BaseLayout title={title} description={description}>
+  <StatsDashboard client:load />
+</BaseLayout>

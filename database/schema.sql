@@ -47,3 +47,24 @@ CREATE TABLE team_daily_records (
   UNIQUE KEY uniq_team_daily (team_id, season, record_date),
   CONSTRAINT fk_records_team FOREIGN KEY (team_id) REFERENCES teams(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE team_advanced_stats (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  team_id INT UNSIGNED NOT NULL,
+  season VARCHAR(16) NOT NULL,
+  assists DECIMAL(8,2) NULL,
+  turnovers DECIMAL(8,2) NULL,
+  total_rebounds DECIMAL(8,2) NULL,
+  three_point_makes DECIMAL(8,2) NULL,
+  three_point_attempts DECIMAL(8,2) NULL,
+  three_point_percentage DECIMAL(5,2) NULL,
+  pace DECIMAL(8,2) NULL,
+  offensive_rating DECIMAL(8,2) NULL,
+  defensive_rating DECIMAL(8,2) NULL,
+  source VARCHAR(160) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_team_advanced (team_id, season),
+  INDEX idx_team_advanced_season (season),
+  CONSTRAINT fk_advanced_team FOREIGN KEY (team_id) REFERENCES teams(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

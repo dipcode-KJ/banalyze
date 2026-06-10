@@ -1,11 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import StatsDashboard from "../components/StatsDashboard";
+import PortalHome from "../components/PortalHome";
 
-const title = "NINES DATA | Bリーグ統計ダッシュボード";
-const description = "Bリーグの試合結果を収集し、勝率・得失点差・ホーム/アウェイ成績を可視化する統計サービスです。";
+const title = "NINES ANALYZE | Bリーグ統計ポータル";
+const description = "NINES ANALYZEの使い方、各ページの見方、Bリーグ統計データの確認方法を案内します。";
 ---
 
 <BaseLayout title={title} description={description}>
-  <StatsDashboard client:load />
+  <PortalHome client:load />
 </BaseLayout>

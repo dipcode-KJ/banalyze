@@ -1,4 +1,4 @@
-export type SeasonKey = "2025-26" | "2024-25" | "2023-24";
+export type SeasonKey = "2025-26" | "2024-25" | "2023-24" | "2022-23";
 
 export type TeamRecord = {
   id: string;
@@ -15,6 +15,44 @@ export type TeamRecord = {
   awayWins: number;
   awayLosses: number;
   lastFive: Array<"W" | "L">;
+};
+
+export type TeamAdvancedStats = {
+  teamId: string;
+  season: SeasonKey;
+  assists: number | null;
+  turnovers: number | null;
+  totalRebounds: number | null;
+  threePointMakes: number | null;
+  threePointAttempts: number | null;
+  threePointPercentage: number | null;
+  pace: number | null;
+  offensiveRating: number | null;
+  defensiveRating: number | null;
+  source: string | null;
+  updatedAt: string | null;
+};
+
+export type AdvancedRankingMetric = "three_point_percentage" | "assists" | "total_rebounds" | "offensive_rating" | "defensive_rating";
+
+export type AdvancedRankingRecord = {
+  rank: number;
+  metric: AdvancedRankingMetric;
+  value: number | null;
+  teamId: string;
+  name: string;
+  shortName: string;
+  division: string | null;
+  conference: string | null;
+  assists: number | null;
+  totalRebounds: number | null;
+  threePointMakes: number | null;
+  threePointAttempts: number | null;
+  threePointPercentage: number | null;
+  offensiveRating: number | null;
+  defensiveRating: number | null;
+  source: string | null;
+  updatedAt: string | null;
 };
 
 export type GameResult = {
@@ -203,6 +241,22 @@ export const seasons: SeasonDataset[] = [
       { id: "g-2024-003", date: "2024-05-18", home: "名古屋D", away: "三遠", homeScore: 88, awayScore: 81, venue: "ドルフィンズアリーナ" },
     ],
   },
+  {
+    label: "2022-23",
+    teams: [
+      { ...currentTeams[1], wins: 53, losses: 7, pointsFor: 5234, pointsAgainst: 4552, homeWins: 28, homeLosses: 2, awayWins: 25, awayLosses: 5 },
+      { ...currentTeams[0], wins: 50, losses: 10, pointsFor: 4932, pointsAgainst: 4315, homeWins: 26, homeLosses: 4, awayWins: 24, awayLosses: 6 },
+      { ...currentTeams[3], wins: 48, losses: 12, pointsFor: 4876, pointsAgainst: 4388, homeWins: 27, homeLosses: 3, awayWins: 21, awayLosses: 9 },
+      { ...currentTeams[4], wins: 42, losses: 18, pointsFor: 4744, pointsAgainst: 4462, homeWins: 22, homeLosses: 8, awayWins: 20, awayLosses: 10 },
+      { ...currentTeams[5], wins: 40, losses: 20, pointsFor: 4860, pointsAgainst: 4688, homeWins: 21, homeLosses: 9, awayWins: 19, awayLosses: 11 },
+      { ...currentTeams[2], wins: 35, losses: 25, pointsFor: 4628, pointsAgainst: 4582, homeWins: 19, homeLosses: 11, awayWins: 16, awayLosses: 14 },
+    ],
+    recentGames: [
+      { id: "g-2023-001", date: "2023-05-28", home: "千葉J", away: "琉球", homeScore: 73, awayScore: 88, venue: "横浜アリーナ" },
+      { id: "g-2023-002", date: "2023-05-27", home: "千葉J", away: "琉球", homeScore: 93, awayScore: 96, venue: "横浜アリーナ" },
+      { id: "g-2023-003", date: "2023-05-21", home: "A東京", away: "千葉J", homeScore: 62, awayScore: 93, venue: "有明コロシアム" },
+    ],
+  },
 ];
 
 export const seasonLabels = seasons.map((season) => season.label);
@@ -211,3 +265,120 @@ export const winRate = (team: TeamRecord) => {
   return games > 0 ? team.wins / games : 0;
 };
 export const pointDiff = (team: TeamRecord) => team.pointsFor - team.pointsAgainst;
+
+const currentAdvancedStats: TeamAdvancedStats[] = [
+  {
+    teamId: "san-en",
+    season: "2025-26",
+    assists: 22.8,
+    turnovers: 11.3,
+    totalRebounds: 40.8,
+    threePointMakes: 11.2,
+    threePointAttempts: 30.4,
+    threePointPercentage: 36.8,
+    pace: 77.1,
+    offensiveRating: 110.0,
+    defensiveRating: 102.4,
+    source: "Sample fallback",
+    updatedAt: null,
+  },
+  {
+    teamId: "chiba-jets",
+    season: "2025-26",
+    assists: 21.9,
+    turnovers: 11.8,
+    totalRebounds: 39.6,
+    threePointMakes: 10.8,
+    threePointAttempts: 30.0,
+    threePointPercentage: 36.0,
+    pace: 76.3,
+    offensiveRating: 109.6,
+    defensiveRating: 102.2,
+    source: "Sample fallback",
+    updatedAt: null,
+  },
+  {
+    teamId: "nagoya-d",
+    season: "2025-26",
+    assists: 20.5,
+    turnovers: 12.6,
+    totalRebounds: 38.2,
+    threePointMakes: 10.5,
+    threePointAttempts: 30.2,
+    threePointPercentage: 34.8,
+    pace: 76.8,
+    offensiveRating: 106.5,
+    defensiveRating: 103.8,
+    source: "Sample fallback",
+    updatedAt: null,
+  },
+  {
+    teamId: "alvark",
+    season: "2025-26",
+    assists: 19.8,
+    turnovers: 10.9,
+    totalRebounds: 37.1,
+    threePointMakes: 9.1,
+    threePointAttempts: 26.6,
+    threePointPercentage: 34.2,
+    pace: 74.8,
+    offensiveRating: 104.4,
+    defensiveRating: 99.6,
+    source: "Sample fallback",
+    updatedAt: null,
+  },
+  {
+    teamId: "utsunomiya",
+    season: "2025-26",
+    assists: 20.2,
+    turnovers: 10.5,
+    totalRebounds: 41.2,
+    threePointMakes: 8.9,
+    threePointAttempts: 26.5,
+    threePointPercentage: 33.6,
+    pace: 75.0,
+    offensiveRating: 108.1,
+    defensiveRating: 98.5,
+    source: "Sample fallback",
+    updatedAt: null,
+  },
+  {
+    teamId: "ryukyu",
+    season: "2025-26",
+    assists: 18.9,
+    turnovers: 11.1,
+    totalRebounds: 42.5,
+    threePointMakes: 8.0,
+    threePointAttempts: 24.6,
+    threePointPercentage: 32.5,
+    pace: 74.2,
+    offensiveRating: 107.4,
+    defensiveRating: 100.2,
+    source: "Sample fallback",
+    updatedAt: null,
+  },
+];
+
+export const advancedStatsBySeason: Record<SeasonKey, TeamAdvancedStats[]> = seasons.reduce(
+  (acc, season) => {
+    acc[season.label] = season.teams.map((team, index) => {
+      const base = currentAdvancedStats.find((record) => record.teamId === team.id) ?? currentAdvancedStats[index % currentAdvancedStats.length];
+      const seasonOffset = season.label === "2025-26" ? 0 : season.label === "2024-25" ? -0.4 : season.label === "2023-24" ? -0.8 : -1.1;
+      return {
+        ...base,
+        teamId: team.id,
+        season: season.label,
+        assists: base.assists === null ? null : Number((base.assists + seasonOffset * 0.25).toFixed(1)),
+        totalRebounds: base.totalRebounds === null ? null : Number((base.totalRebounds + seasonOffset * 0.3 + index * 0.08).toFixed(1)),
+        threePointMakes: base.threePointMakes === null ? null : Number((base.threePointMakes + seasonOffset * 0.2).toFixed(1)),
+        threePointAttempts: base.threePointAttempts === null ? null : Number((base.threePointAttempts + Math.abs(seasonOffset) * 0.7).toFixed(1)),
+        threePointPercentage:
+          base.threePointPercentage === null ? null : Number((base.threePointPercentage + seasonOffset + index * 0.12).toFixed(1)),
+        offensiveRating: base.offensiveRating === null ? null : Number((base.offensiveRating + seasonOffset * 0.8).toFixed(1)),
+        defensiveRating: base.defensiveRating === null ? null : Number((base.defensiveRating - seasonOffset * 0.55).toFixed(1)),
+      };
+    });
+    return acc;
+  },
+  {} as Record<SeasonKey, TeamAdvancedStats[]>,
+);

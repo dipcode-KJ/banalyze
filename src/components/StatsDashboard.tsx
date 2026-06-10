@@ -19,13 +19,22 @@ import "./StatsDashboard.css";
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend);
 
 const chartPalette = {
-  ink: "#111111",
-  graphite: "#3d3d3d",
-  muted: "#c9c9c9",
+  ink: "#10121d",
+  graphite: "#2f341c",
+  muted: "#e6edcc",
   neon: "#d7ff00",
-  purple: "#7c4dff",
-  cyan: "#00c2ff",
-  coral: "#ff5c35",
+  shade900: "#161d00",
+  shade700: "#334700",
+  shade500: "#5f8000",
+  shade300: "#92bd00",
+  shade100: "#c4ef00",
+};
+
+const shadeScale = ["#161d00", "#243200", "#334700", "#496300", "#5f8000", "#7fa800", "#a5d100", "#d7ff00"];
+
+const shadeByIndex = (index: number, total: number) => {
+  const scaleIndex = Math.min(shadeScale.length - 1, Math.floor((index / Math.max(1, total - 1)) * (shadeScale.length - 1)));
+  return shadeScale[scaleIndex];
 };
 
 const chartOptions = {
@@ -35,19 +44,19 @@ const chartOptions = {
   plugins: {
     legend: {
       labels: {
-        color: "#334155",
+        color: "#333333",
         boxWidth: 12,
       },
     },
   },
   scales: {
     x: {
-      ticks: { color: "#475569" },
+      ticks: { color: "#333333" },
       grid: { display: false },
     },
     y: {
-      ticks: { color: "#475569" },
-      grid: { color: "rgba(148, 163, 184, 0.24)" },
+      ticks: { color: "#333333" },
+      grid: { color: "rgba(95, 128, 0, 0.18)" },
     },
   },
 };
@@ -55,7 +64,7 @@ const chartOptions = {
 export default function StatsDashboard() {
   const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
   const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
-  const { teams, recentGames, source } = useSeasonData(selectedSeason, selectedDivision);
+  const { teams, source } = useSeasonData(selectedSeason, selectedDivision);
   const { series } = useSeasonSeries(selectedDivision);
 
   const sortedTeams = useMemo(() => [...teams].sort((a, b) => winRate(b) - winRate(a)), [teams]);
@@ -76,10 +85,7 @@ export default function StatsDashboard() {
       {
         label: "勝率",
         data: chartTeams.map((team) => Number((winRate(team) * 100).toFixed(1))),
-        backgroundColor: chartTeams.map((_, index) =>
-          [chartPalette.neon, chartPalette.ink, chartPalette.purple, chartPalette.cyan, chartPalette.graphite, chartPalette.muted][index] ??
-          chartPalette.muted,
-        ),
+        backgroundColor: chartTeams.map((_, index) => (index === 0 ? chartPalette.neon : shadeByIndex(index, chartTeams.length))),
         borderColor: chartPalette.ink,
         borderWidth: 1,
         borderRadius: 0,
@@ -93,8 +99,8 @@ export default function StatsDashboard() {
       {
         label: "得失点差",
         data: chartTeams.map(pointDiff),
-        borderColor: chartPalette.purple,
-        backgroundColor: "rgba(124, 77, 255, 0.1)",
+        borderColor: chartPalette.shade500,
+        backgroundColor: "rgba(95, 128, 0, 0.16)",
         tension: 0.35,
         pointRadius: 5,
         pointBorderWidth: 2,
@@ -125,17 +131,19 @@ export default function StatsDashboard() {
     <main className="dashboard">
       <header className="siteHeader">
         <a className="brand" href="/">
-          <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze.svg" />
+          <img alt="NINES ANALYZE" src="/nines_analyze_logo.svg" />
         </a>
         <nav className="siteNav" aria-label="主要ナビゲーション">
-          <a href="/">Overview</a>
-          <a href="/teams">Teams</a>
-          <a href="/analytics">Analytics</a>
-          <a href="/trends">Trends</a>
-          <a href="/results">Results</a>
+          <a href="/"><span>Home</span><small>使い方</small></a>
+          <a href="/dashboard"><span>Dashboard</span><small>全体</small></a>
+          <a href="/teams"><span>Teams</span><small>チーム</small></a>
+          <a href="/rankings"><span>Rankings</span><small>順位</small></a>
+          <a href="/analytics"><span>Analytics</span><small>分析</small></a>
+          <a href="/trends"><span>Trends</span><small>推移</small></a>
+          <a href="/results"><span>Results</span><small>結果</small></a>
         </nav>
-        <a className="headerCta" href="/teams">
-          詳細データ
+        <a className="headerCta" href="https://kjnine.com" rel="noreferrer" target="_blank">
+          KJ9へ
           <ArrowRight size={14} />
         </a>
         <button className="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
@@ -173,8 +181,8 @@ export default function StatsDashboard() {
               グラフを見る
               <ArrowRight size={16} />
             </a>
-            <a className="textAction" href="#results">
-              最新結果へ
+            <a className="textAction" href="/results">
+              試合結果へ
               <ArrowRight size={14} />
             </a>
           </div>
@@ -193,7 +201,7 @@ export default function StatsDashboard() {
           <div className="phoneMock">
             <div className="phoneScreen">
               <div className="phoneTop">
-                <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze_wht.svg" />
+                <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
                 <span>{selectedSeason} / {selectedDivision}</span>
               </div>
               <p className="phoneLabel">WIN RATE LEADER</p>
@@ -217,7 +225,7 @@ export default function StatsDashboard() {
         <Metric icon={<TrendingUp size={18} />} label="最高勝率" value={`${(winRate(leader) * 100).toFixed(1)}%`} />
         <Metric icon={<Activity size={18} />} label="対象試合" value={`${totalGames}試合`} />
         <Metric icon={<ArrowUpDown size={18} />} label="平均得点" value={`${avgPoints}点`} />
-        <Metric icon={<CalendarRange size={18} />} label="データ" value={source === "db" ? "DB/API" : selectedSeason} />
+        <Metric icon={<CalendarRange size={18} />} label="データ" value={source === "db" ? "DB/API" : source === "loading" ? "確認中" : selectedSeason} />
       </section>
 
       <section className="contentGrid" id="charts">
@@ -298,10 +306,7 @@ export default function StatsDashboard() {
             <tbody>
               {sortedTeams.map((team) => (
                 <tr key={team.id}>
-                  <td>
-                    <strong>{team.shortName}</strong>
-                    <span>{team.name}</span>
-                  </td>
+                  <TeamNameCell name={team.name} shortName={team.shortName} />
                   <td>{team.conference}</td>
                   <td>
                     {team.wins}-{team.losses}
@@ -330,30 +335,6 @@ export default function StatsDashboard() {
         </div>
       </section>
 
-      <section className="gamesSection" id="results">
-        <div className="sectionHeader">
-          <div>
-            <p>Recent Results</p>
-            <h2>最新試合結果</h2>
-            <small>選択したシーズン・ディビジョンの直近試合を、日付・スコア・会場で確認できます。</small>
-          </div>
-        </div>
-        <div className="gameList">
-          {recentGames.map((game) => (
-            <article className="gameItem" key={game.id}>
-              <time dateTime={game.date}>{game.date}</time>
-              <div className="scoreLine">
-                <span>{game.home}</span>
-                <strong>
-                  {game.homeScore} - {game.awayScore}
-                </strong>
-                <span>{game.away}</span>
-              </div>
-              <small>{game.venue}</small>
-            </article>
-          ))}
-        </div>
-      </section>
       <section className="noticeBand" aria-label="サイト利用上の注意">
         <div>
           <p>Unofficial Notice</p>
@@ -373,20 +354,22 @@ function MobileDrawer() {
   return (
     <div className="mobileDrawer" id="mobile-drawer">
       <div className="mobileDrawerTop">
-        <img alt="NINES DATA ANALYZE" src="/nines_dataanalyze_wht.svg" />
+        <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
         <span>Menu</span>
       </div>
       <nav className="mobileDrawerNav" aria-label="モバイルナビゲーション">
-        <a href="/"><span>01</span>Overview</a>
-        <a href="/teams"><span>02</span>Teams</a>
-        <a href="/analytics"><span>03</span>Analytics</a>
-        <a href="/trends"><span>04</span>Trends</a>
-        <a href="/results"><span>05</span>Results</a>
-        <a href="/terms"><span>06</span>Terms</a>
-        <a href="/privacy"><span>07</span>Privacy</a>
+        <a href="/"><span>01</span><strong>Home<small>使い方</small></strong></a>
+        <a href="/dashboard"><span>02</span><strong>Dashboard<small>全体</small></strong></a>
+        <a href="/teams"><span>03</span><strong>Teams<small>チーム</small></strong></a>
+        <a href="/rankings"><span>04</span><strong>Rankings<small>順位</small></strong></a>
+        <a href="/analytics"><span>05</span><strong>Analytics<small>分析</small></strong></a>
+        <a href="/trends"><span>06</span><strong>Trends<small>推移</small></strong></a>
+        <a href="/results"><span>07</span><strong>Results<small>結果</small></strong></a>
+        <a href="/terms"><span>08</span><strong>Terms<small>規約</small></strong></a>
+        <a href="/privacy"><span>09</span><strong>Privacy<small>方針</small></strong></a>
       </nav>
-      <a className="mobileDrawerContact" href="https://kjnine.com/contact" rel="noreferrer" target="_blank">
-        Contact
+      <a className="mobileDrawerContact" href="https://kjnine.com" rel="noreferrer" target="_blank">
+        KJ9サイトへ
         <ArrowRight size={18} />
       </a>
     </div>
@@ -425,6 +408,21 @@ function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; 
       <strong>{value}</strong>
     </article>
   );
+}
+
+function TeamNameCell({ name, shortName }: { name: string; shortName: string }) {
+  const showName = normalizeTeamLabel(name) !== normalizeTeamLabel(shortName);
+
+  return (
+    <td className="teamNameCell">
+      <strong>{shortName}</strong>
+      {showName && <span>{name}</span>}
+    </td>
+  );
+}
+
+function normalizeTeamLabel(value: string) {
+  return value.replace(/\s+/g, "").trim();
 }
 
 function emptyTeam(division: DivisionFilter): TeamRecord {

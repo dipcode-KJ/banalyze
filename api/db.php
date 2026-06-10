@@ -40,6 +40,7 @@ function db(): PDO
 
 function json_response(array $payload): void
 {
+    ini_set('serialize_precision', '-1');
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store, max-age=0');
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

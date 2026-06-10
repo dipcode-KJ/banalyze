@@ -1,0 +1,8 @@
+---
+import { RankingsPage } from "../components/StatsPages";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Rankings | NINES DATA" description="Bリーグの基本順位、勝率、得失点差、平均得点、平均失点、3P成功率ランキングを確認できます。">
+  <RankingsPage client:load />
+</BaseLayout>

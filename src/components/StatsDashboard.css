@@ -4,7 +4,7 @@
   --color-light: #f2f2f2;
   --color-white: #ffffff;
   --color-neon: #d7ff00;
-  --color-purple: #7c4dff;
+  --color-shade: #4f6f00;
   --line: #e5e5e5;
 }
 
@@ -38,14 +38,29 @@
 .siteNav {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
 }
 
 .siteNav a {
+  display: grid;
+  gap: 2px;
   color: var(--color-dark);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  line-height: 1.15;
   text-decoration: none;
+}
+
+.siteNav a span {
+  color: var(--color-black);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.siteNav a small {
+  color: var(--color-dark);
+  font-size: 0.62rem;
+  font-weight: 800;
 }
 
 .headerCta,
@@ -78,6 +93,13 @@
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.menuLine {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
 }
 
 .mobileDrawer {
@@ -154,6 +176,20 @@
   line-height: 1.08;
   text-decoration: none;
   transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.mobileDrawerNav a strong {
+  display: grid;
+  gap: 4px;
+  font: inherit;
+}
+
+.mobileDrawerNav a small {
+  color: rgba(255, 255, 255, 0.54);
+  font-size: clamp(0.72rem, 1.6vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .mobileDrawerNav a span {
@@ -514,7 +550,7 @@
 }
 
 .miniBars span:nth-child(even) {
-  background: var(--color-purple);
+  background: #89b800;
 }
 
 .phoneMeta {
@@ -717,17 +753,57 @@ th {
   text-transform: uppercase;
 }
 
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+  text-align: left;
+  text-transform: inherit;
+}
+
+.sortButton span {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid var(--line);
+  color: var(--color-dark);
+  font-size: 0.72rem;
+  letter-spacing: 0;
+}
+
+.sortButton.active {
+  color: var(--color-black);
+}
+
+.sortButton.active span {
+  border-color: var(--color-black);
+  background: var(--color-black);
+  color: var(--color-neon);
+}
+
 td {
   color: var(--color-black);
   font-size: 0.94rem;
 }
 
 td:first-child {
+  color: var(--color-black);
+}
+
+.teamNameCell {
   display: grid;
   gap: 4px;
 }
 
-td:first-child span {
+.teamNameCell span {
   color: var(--color-dark);
   font-size: 0.78rem;
 }
@@ -806,17 +882,442 @@ td:first-child span {
 }
 
 .statPage {
-  padding-bottom: 80px;
+  padding-bottom: 0;
+}
+
+.teamDetailPanel {
+  display: grid;
+  gap: 28px;
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.teamPicker {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+
+.teamPicker button {
+  display: grid;
+  gap: 8px;
+  min-width: 150px;
+  border: 0;
+  background: var(--color-white);
+  color: var(--color-black);
+  cursor: pointer;
+  padding: 18px 20px;
+  text-align: left;
+}
+
+.teamPicker button.active {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.teamPicker span {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.teamPicker small {
+  color: var(--color-dark);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.teamPicker button.active small {
+  color: var(--color-neon);
+}
+
+.teamProfile {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  gap: 2px;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+
+.teamProfileLead,
+.teamProfileStats article {
+  background: var(--color-white);
+  padding: 28px;
+}
+
+.teamProfileLead {
+  background:
+    linear-gradient(135deg, rgba(215, 255, 0, 0.18), transparent 45%),
+    var(--color-black);
+  color: var(--color-white);
+}
+
+.teamProfileLead p,
+.teamGamePanel > p {
+  margin: 0;
+  color: var(--color-neon);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.teamProfileLead h2 {
+  margin: 22px 0 0;
+  font-size: clamp(2rem, 4vw, 4.1rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.teamProfileLead small {
+  display: block;
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.teamProfileStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.teamProfileStats span {
+  display: block;
+  color: var(--color-dark);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.teamProfileStats strong {
+  display: block;
+  margin-top: 18px;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.teamProfileStats small {
+  display: block;
+  margin-top: 12px;
+  color: var(--color-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.articleDataPanel {
+  display: grid;
+  gap: 24px;
+}
+
+.articleMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 2px;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+
+.articleMetricGrid article {
+  display: grid;
+  align-content: space-between;
+  min-height: 210px;
+  background: var(--color-white);
+  padding: 22px;
+}
+
+.articleMetricGrid article:first-child {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.articleMetricGrid span {
+  color: var(--color-dark);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.articleMetricGrid article:first-child span,
+.articleMetricGrid article:first-child small {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.articleMetricGrid strong {
+  display: block;
+  margin-top: 22px;
+  font-size: clamp(1.75rem, 2.8vw, 2.8rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.articleMetricGrid article:first-child strong {
+  color: var(--color-neon);
+}
+
+.articleMetricGrid small {
+  display: block;
+  margin-top: 18px;
+  color: var(--color-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.advancedMetricPanel {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.55fr) minmax(0, 1fr);
+  gap: 2px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.advancedMetricPanel > div,
+.advancedMetricGrid {
+  margin: 0;
+  background: var(--color-light);
+  padding: 24px;
+}
+
+.advancedMetricPanel p {
+  margin: 0;
+  color: var(--color-dark);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.advancedMetricPanel h3 {
+  margin: 12px 0 0;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.advancedMetricPanel > div > small {
+  display: block;
+  margin-top: 12px;
+  color: var(--color-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.advancedMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.advancedMetricGrid article {
+  background: var(--color-white);
+  padding: 18px;
+}
+
+.advancedMetricGrid span {
+  color: var(--color-dark);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.advancedMetricGrid strong {
+  display: block;
+  margin-top: 12px;
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.advancedMetricGrid small {
+  display: block;
+  margin-top: 10px;
+  color: var(--color-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.teamDetailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(280px, 0.86fr);
+  gap: 2px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.teamDetailGrid .dataPanel {
+  min-width: 0;
+}
+
+.compactChart {
+  height: 280px;
+}
+
+.teamGamePanel {
+  background: var(--color-white);
+  padding: 28px;
+}
+
+.teamGamePanel h2 {
+  margin: 18px 0 0;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.teamGamePanel > small {
+  display: block;
+  margin-top: 12px;
+  color: var(--color-dark);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.teamGameList {
+  display: grid;
+  gap: 2px;
+  margin-top: 22px;
+  background: var(--line);
+}
+
+.teamGameList article {
+  display: grid;
+  gap: 8px;
+  background: var(--color-light);
+  padding: 16px;
+}
+
+.teamGameList time,
+.teamGameList span {
+  color: var(--color-dark);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.teamGameList strong {
+  font-size: 0.94rem;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.selectedOnlyData {
+  margin-top: 32px;
+}
+
+.teamSplitPanel {
+  border-top: 4px solid var(--color-black);
+}
+
+.teamSplitList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  margin-top: 22px;
+  background: var(--line);
+}
+
+.teamSplitList article {
+  min-height: 176px;
+  background: var(--color-light);
+  padding: 22px;
+}
+
+.teamSplitList span,
+.teamSplitList small {
+  display: block;
+  color: var(--color-dark);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.teamSplitList strong {
+  display: block;
+  margin: 24px 0 12px;
+  color: var(--color-black);
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.selectedRow {
+  background: rgba(215, 255, 0, 0.16);
+}
+
+.teamTableButton {
+  display: grid;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.teamTableButton:hover strong {
+  text-decoration: underline;
 }
 
 .pageHero {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 34px;
   width: min(1200px, calc(100% - 40px));
   margin: 0 auto;
   padding: 88px 0 56px;
+}
+
+.pageHeroControls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+}
+
+.pageHeroControls .seasonSwitch,
+.pageHeroControls .divisionSwitch {
+  margin-top: 0;
+}
+
+.pageHeroControls .seasonSwitch button,
+.pageHeroControls .divisionSwitch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  padding: 0 32px;
+  font-size: 0.98rem;
+  line-height: 1;
+}
+
+.pageHeroControls .seasonSwitch button {
+  min-width: 150px;
+}
+
+.pageHeroControls .divisionSwitch button {
+  min-width: 86px;
 }
 
 .pageHero h1 {
@@ -826,6 +1327,48 @@ td:first-child span {
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1.05;
+}
+
+.portalMeta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto 32px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.portalMeta article {
+  min-height: 154px;
+  background: var(--color-white);
+  padding: 22px;
+}
+
+.portalMeta span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--color-dark);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.portalMeta strong {
+  display: block;
+  color: var(--color-black);
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.portalMeta p {
+  margin: 12px 0 0;
+  color: var(--color-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.75;
 }
 
 .dataGrid {
@@ -931,6 +1474,135 @@ td:first-child span {
   padding: 22px;
 }
 
+.rankingHeroGrid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.8fr) minmax(0, 1.2fr);
+  gap: 2px;
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto 32px;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+
+.rankingLeaderPanel,
+.rankingSummaryGrid article {
+  background: var(--color-white);
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.rankingLeaderPanel {
+  background:
+    linear-gradient(135deg, rgba(215, 255, 0, 0.2), transparent 48%),
+    var(--color-black);
+  color: var(--color-white);
+}
+
+.rankingLeaderPanel p,
+.rankingSummaryGrid span {
+  margin: 0;
+  color: var(--color-neon);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.rankingSummaryGrid span {
+  color: var(--color-dark);
+}
+
+.rankingLeaderPanel h2 {
+  margin: 28px 0 0;
+  font-size: clamp(2.4rem, 5vw, 5rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.rankingLeaderPanel strong {
+  display: block;
+  width: fit-content;
+  margin-top: 18px;
+  background: var(--color-neon);
+  color: var(--color-black);
+  font-size: clamp(2rem, 5vw, 4.4rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 4px 12px;
+}
+
+.rankingLeaderPanel small,
+.rankingSummaryGrid small {
+  display: block;
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.rankingSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.rankingSummaryGrid article {
+  display: grid;
+  align-content: space-between;
+  min-height: 220px;
+}
+
+.rankingSummaryGrid strong {
+  display: block;
+  margin-top: 28px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.rankingSummaryGrid small {
+  color: var(--color-dark);
+}
+
+.rankingsOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto 32px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.advancedRankingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto 32px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.compactRankPanel {
+  min-width: 0;
+  border-top-width: 4px;
+}
+
+.advancedRankPanel {
+  background: var(--color-white);
+}
+
+.compactRankPanel h2 {
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  letter-spacing: 0;
+}
+
 .rankPanel > p {
   margin: 0 0 8px;
   color: var(--color-dark);
@@ -946,8 +1618,29 @@ td:first-child span {
   letter-spacing: -0.03em;
 }
 
+.rankPanel.compactRankPanel h2 {
+  font-size: clamp(1.25rem, 2vw, 1.85rem);
+  letter-spacing: 0;
+}
+
 .rankPanel > small {
   margin: -8px 0 14px;
+}
+
+.rankScroll {
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.rankScrollFull {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.emptyRankItem {
+  opacity: 0.72;
 }
 
 .rankItem {
@@ -973,6 +1666,22 @@ td:first-child span {
   white-space: nowrap;
 }
 
+.shootingRankItem strong {
+  display: grid;
+  gap: 4px;
+}
+
+.rankItem strong small,
+.shootingRankItem strong small {
+  overflow: hidden;
+  color: var(--color-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .rankItem em {
   background: var(--color-neon);
   color: var(--color-black);
@@ -983,6 +1692,10 @@ td:first-child span {
 
 .pageTable {
   padding-bottom: 0;
+}
+
+.rankingTable {
+  margin-top: 32px;
 }
 
 .insightStrip {
@@ -1024,6 +1737,11 @@ td:first-child span {
   margin: 32px auto 0;
   border: 1px solid var(--line);
   background: var(--line);
+}
+
+.scrollArea {
+  max-height: 720px;
+  overflow-y: auto;
 }
 
 .resultCard {
@@ -1092,6 +1810,502 @@ td:first-child span {
   font-size: 0.92rem;
   font-weight: 700;
   line-height: 1.9;
+}
+
+.portalPage {
+  min-height: 100vh;
+  background: var(--color-white);
+}
+
+.portalHero,
+.portalLatest,
+.portalVisualBand,
+.portalGuide,
+.portalConcept,
+.portalLinks,
+.portalTrust {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.portalHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.78fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+  padding: clamp(64px, 10vw, 132px) 0 56px;
+}
+
+.portalHero h1 {
+  max-width: 820px;
+  margin: 0;
+  font-size: clamp(3rem, 7.1vw, 6.4rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.04;
+}
+
+.portalHero p:not(.eyebrow) {
+  max-width: 720px;
+  margin: 24px 0 0;
+  color: var(--color-dark);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+.portalHeroMedia {
+  position: relative;
+  min-height: clamp(420px, 48vw, 620px);
+  border: 1px solid var(--color-black);
+  background:
+    linear-gradient(135deg, rgba(215, 255, 0, 0.12), transparent 38%),
+    var(--color-black);
+  overflow: hidden;
+}
+
+.portalHeroMedia img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.08);
+  opacity: 0.78;
+}
+
+.portalHeroMedia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(17, 17, 17, 0.08), rgba(17, 17, 17, 0.7)),
+    linear-gradient(90deg, rgba(98, 136, 0, 0.5), transparent 58%);
+}
+
+.heroDataCard {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(17, 17, 17, 0.78);
+  padding: 22px;
+  color: var(--color-white);
+  backdrop-filter: blur(14px);
+}
+
+.heroDataCard span,
+.visualDataPanel > p,
+.visualPhotoCard p,
+.portalConcept .sectionHeader p {
+  margin: 0;
+  color: var(--color-neon);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.heroDataCard strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-white);
+  font-size: clamp(2.6rem, 5vw, 4.6rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+
+.heroDataCard small {
+  display: block;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.heroMiniChart {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 1;
+  display: flex;
+  align-items: end;
+  gap: 7px;
+  width: 132px;
+  height: 104px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(17, 17, 17, 0.68);
+  padding: 14px;
+}
+
+.heroMiniChart i {
+  display: block;
+  flex: 1;
+  background: linear-gradient(180deg, var(--color-neon), #4f6f00);
+}
+
+.portalActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.portalLatest {
+  padding: 0 0 72px;
+}
+
+.portalGameList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+
+.portalGameCard {
+  display: grid;
+  gap: 18px;
+  min-height: 220px;
+  background: var(--color-white);
+  padding: 24px;
+}
+
+.portalGameCard:first-child {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.portalGameCard time,
+.portalGameCard small {
+  color: var(--color-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.portalGameCard:first-child time,
+.portalGameCard:first-child small {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.portalScoreLine {
+  display: grid;
+  gap: 8px;
+}
+
+.portalScoreLine span {
+  color: var(--color-dark);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.portalGameCard:first-child .portalScoreLine span {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.portalScoreLine .winner {
+  color: var(--color-black);
+}
+
+.portalGameCard:first-child .portalScoreLine .winner {
+  color: var(--color-neon);
+}
+
+.portalScoreLine strong {
+  color: var(--color-black);
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.portalGameCard:first-child .portalScoreLine strong {
+  color: var(--color-white);
+}
+
+.portalDataNote {
+  margin: 14px 0 0;
+  color: var(--color-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.portalVisualBand {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr 1fr;
+  gap: 2px;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+  margin-bottom: 72px;
+}
+
+.visualPhotoCard,
+.visualDataPanel {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+}
+
+.visualPhotoCard img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.12);
+}
+
+.visualPhotoCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(17, 17, 17, 0.12), rgba(17, 17, 17, 0.82));
+}
+
+.visualPhotoCardDark::after {
+  background: linear-gradient(180deg, rgba(118, 160, 0, 0.26), rgba(17, 17, 17, 0.86));
+}
+
+.visualPhotoCard > div {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+  z-index: 1;
+}
+
+.visualPhotoCard h2,
+.visualDataPanel h2 {
+  margin: 12px 0 0;
+  color: var(--color-white);
+  font-size: clamp(1.65rem, 3vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+.visualDataPanel {
+  display: grid;
+  align-content: space-between;
+  background:
+    linear-gradient(90deg, transparent 0 39px, rgba(255, 255, 255, 0.08) 39px 40px),
+    linear-gradient(0deg, transparent 0 39px, rgba(255, 255, 255, 0.08) 39px 40px),
+    #1f2700;
+  background-size: 40px 40px;
+  padding: 28px;
+}
+
+.dataBars {
+  display: grid;
+  gap: 12px;
+}
+
+.dataBars span {
+  display: block;
+  height: 20px;
+  background: linear-gradient(90deg, var(--color-neon), #5d7f00);
+}
+
+.portalGuide {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.portalGuide article {
+  min-height: 240px;
+  background: var(--color-white);
+  padding: 28px;
+}
+
+.portalGuide span {
+  display: inline-grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  background: var(--color-black);
+  color: var(--color-neon);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.portalGuide h2,
+.portalTrust h2 {
+  margin: 24px 0 0;
+  font-size: clamp(1.45rem, 2.4vw, 2.15rem);
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.portalGuide p {
+  margin: 18px 0 0;
+  color: var(--color-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.85;
+}
+
+.portalConcept {
+  padding: 80px 0 0;
+}
+
+.conceptGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  border: 1px solid var(--color-black);
+  background: var(--color-black);
+}
+
+.conceptGrid article {
+  min-height: 280px;
+  background: var(--color-light);
+  padding: 30px;
+}
+
+.conceptGrid article:first-child {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.conceptGrid svg {
+  color: var(--color-neon);
+}
+
+.conceptGrid h3 {
+  margin: 28px 0 0;
+  font-size: clamp(1.45rem, 2.5vw, 2.2rem);
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.conceptGrid p {
+  margin: 18px 0 0;
+  color: var(--color-dark);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.85;
+}
+
+.conceptGrid article:first-child p {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.portalLinks {
+  padding: 80px 0;
+}
+
+.portalLinkGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 2px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.portalLinkCard {
+  display: grid;
+  min-height: 310px;
+  background: var(--color-white);
+  color: var(--color-black);
+  padding: 24px;
+  text-decoration: none;
+}
+
+.portalLinkCard > span {
+  display: inline-grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  background: var(--color-neon);
+  color: var(--color-black);
+}
+
+.portalLinkCard p {
+  margin: 28px 0 8px;
+  color: var(--color-dark);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.portalLinkCard h3 {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.8vw, 1.65rem);
+  line-height: 1.3;
+}
+
+.portalLinkCard small {
+  margin-top: 14px;
+  color: var(--color-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.portalLinkCard em {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: end;
+  margin-top: 24px;
+  color: var(--color-black);
+  font-style: normal;
+  font-weight: 900;
+}
+
+.portalLinkCard:hover {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.portalLinkCard:hover p,
+.portalLinkCard:hover small,
+.portalLinkCard:hover em {
+  color: var(--color-white);
+}
+
+.portalTrust {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1fr);
+  gap: 34px;
+  border-top: 4px solid var(--color-black);
+  background: var(--color-light);
+  padding: 30px;
+  margin-bottom: 80px;
+}
+
+.portalTrust > div {
+  display: grid;
+  align-content: start;
+}
+
+.portalTrust svg {
+  color: var(--color-black);
+}
+
+.portalTrust h2 {
+  margin-top: 18px;
+}
+
+.portalTrust p {
+  margin: 0;
+  color: var(--color-dark);
+  font-size: 0.94rem;
+  font-weight: 700;
+  line-height: 1.95;
 }
 
 .legalPage {
@@ -1170,6 +2384,10 @@ td:first-child span {
   margin-top: 40px;
   background: var(--color-black);
   color: var(--color-white);
+}
+
+.portalPage .siteFooter {
+  margin-top: 0;
 }
 
 .siteFooterInner {
@@ -1252,8 +2470,11 @@ td:first-child span {
   }
 
   .menuButton {
-    display: inline-grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .hero {
@@ -1269,6 +2490,25 @@ td:first-child span {
   .historySection,
   .dataGrid,
   .analysisCards,
+  .teamProfile,
+  .teamProfileStats,
+  .articleMetricGrid,
+  .advancedMetricPanel,
+  .advancedMetricGrid,
+  .rankingHeroGrid,
+  .rankingSummaryGrid,
+  .rankingsOverviewGrid,
+  .advancedRankingGrid,
+  .teamDetailGrid,
+  .teamSplitList,
+  .portalMeta,
+  .portalHero,
+  .portalGameList,
+  .portalVisualBand,
+  .portalGuide,
+  .conceptGrid,
+  .portalLinkGrid,
+  .portalTrust,
   .resultsBoard,
   .gameList,
   .noticeBand {
@@ -1279,13 +2519,8 @@ td:first-child span {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .pageHero {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .compactSwitch {
-    margin-top: -18px;
+    margin-top: 0;
   }
 
   .insightStrip {
@@ -1299,27 +2534,101 @@ td:first-child span {
 
 @media (max-width: 560px) {
   .brand img {
-    width: 150px;
+    width: 118px;
   }
 
   .siteHeader {
-    height: 72px;
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .menuButton {
+    min-width: 44px;
+    height: 44px;
+    justify-content: center;
+    border: 1px solid var(--color-black);
   }
 
   .mobileDrawer {
-    padding-top: 96px;
+    padding: 74px 20px 22px;
+    overflow-y: auto;
+  }
+
+  .mobileDrawerTop {
+    align-items: flex-start;
+  }
+
+  .mobileDrawerTop img {
+    width: min(168px, 50vw);
+  }
+
+  .mobileDrawerNav {
+    gap: 9px;
+    margin: 24px 0;
+  }
+
+  .mobileDrawerNav a {
+    gap: 13px;
+    font-size: clamp(1.65rem, 9.2vw, 2.75rem);
+    line-height: 0.98;
+  }
+
+  .mobileDrawerNav a strong {
+    gap: 2px;
+  }
+
+  .mobileDrawerNav a span {
+    min-width: 28px;
+    font-size: 0.68rem;
+  }
+
+  .mobileDrawerContact {
+    width: 100%;
+    justify-content: center;
   }
 
   .heroText {
-    padding: 44px 22px 34px;
+    padding: 38px 18px 28px;
   }
 
   .hero h1 {
-    font-size: clamp(2.35rem, 10.5vw, 3.2rem);
+    font-size: clamp(2.2rem, 10.2vw, 3rem);
+    line-height: 1.04;
+  }
+
+  .heroText p:not(.eyebrow),
+  .portalHero p:not(.eyebrow) {
+    line-height: 1.75;
+  }
+
+  .heroActions,
+  .portalActions {
+    display: grid;
+    gap: 10px;
+  }
+
+  .heroActions a,
+  .portalActions a {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .seasonSwitch {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    border: 0;
+    background: transparent;
+    gap: 6px;
+    scroll-snap-type: x mandatory;
   }
 
   .seasonSwitch button {
-    min-width: 88px;
+    flex: 0 0 auto;
+    min-width: 104px;
+    height: 46px;
+    border: 1px solid var(--color-black);
+    scroll-snap-align: start;
   }
 
   .divisionSwitch {
@@ -1329,6 +2638,7 @@ td:first-child span {
 
   .divisionSwitch button {
     flex: 1;
+    height: 46px;
   }
 
   .metricGrid,
@@ -1336,9 +2646,30 @@ td:first-child span {
   .historySection,
   .dataGrid,
   .analysisCards,
+  .teamDetailPanel,
+  .teamProfile,
+  .teamProfileStats,
+  .articleMetricGrid,
+  .advancedMetricPanel,
+  .advancedMetricGrid,
+  .rankingHeroGrid,
+  .rankingSummaryGrid,
+  .rankingsOverviewGrid,
+  .advancedRankingGrid,
+  .teamDetailGrid,
+  .portalMeta,
+  .portalLatest,
+  .portalVisualBand,
+  .portalGuide,
+  .portalConcept,
+  .portalLinkGrid,
+  .portalTrust,
   .insightStrip,
   .resultsBoard,
   .pageHero,
+  .portalHero,
+  .portalLatest,
+  .portalLinks,
   .legalHero,
   .legalContent,
   .noticeBand,
@@ -1352,15 +2683,90 @@ td:first-child span {
   }
 
   .contentGrid,
+  .teamDetailPanel,
   .tableSection,
   .gamesSection {
-    padding-top: 54px;
+    padding-top: 42px;
   }
 
   .panelHeader,
   .sectionHeader {
     align-items: flex-start;
     flex-direction: column;
+    gap: 14px;
+  }
+
+  .sectionHeader h2,
+  .panelHeader h2 {
+    font-size: clamp(1.7rem, 8vw, 2.45rem);
+    line-height: 1.08;
+  }
+
+  .portalHero {
+    gap: 24px;
+    padding: 38px 0 30px;
+  }
+
+  .portalHero h1 {
+    font-size: clamp(2.1rem, 10vw, 3.1rem);
+    line-height: 1.06;
+  }
+
+  .portalHero p:not(.eyebrow) {
+    font-size: 0.9rem;
+  }
+
+  .portalHeroMedia {
+    min-height: 300px;
+  }
+
+  .portalLatest {
+    padding-bottom: 46px;
+  }
+
+  .heroDataCard {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    padding: 18px;
+  }
+
+  .heroMiniChart {
+    width: 104px;
+    height: 82px;
+  }
+
+  .portalVisualBand {
+    margin-bottom: 46px;
+  }
+
+  .visualPhotoCard,
+  .visualDataPanel {
+    min-height: 280px;
+  }
+
+  .visualDataPanel {
+    padding: 22px;
+  }
+
+  .portalConcept {
+    padding-top: 54px;
+  }
+
+  .portalLinks {
+    padding: 54px 0;
+  }
+
+  .portalGuide article,
+  .portalGameCard,
+  .conceptGrid article,
+  .portalLinkCard {
+    min-height: auto;
+  }
+
+  .portalTrust {
+    margin-bottom: 56px;
+    padding: 24px;
   }
 
   .panelHeader small,
@@ -1371,11 +2777,146 @@ td:first-child span {
   }
 
   .pageHero {
-    padding: 54px 0 38px;
+    gap: 24px;
+    padding: 34px 0 28px;
   }
 
   .pageHero h1 {
-    font-size: clamp(2.5rem, 13vw, 3.7rem);
+    font-size: clamp(2rem, 10.4vw, 2.9rem);
+    line-height: 1.08;
+  }
+
+  .pageHeroControls {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .pageHeroControls .seasonSwitch {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .pageHeroControls .divisionSwitch {
+    width: 100%;
+  }
+
+  .pageHeroControls .seasonSwitch button,
+  .pageHeroControls .divisionSwitch button {
+    height: 46px;
+    padding: 0 14px;
+    font-size: 0.82rem;
+  }
+
+  .pageHeroControls .seasonSwitch button {
+    min-width: 104px;
+  }
+
+  .portalMeta article,
+  .rankPanel,
+  .chartPanel,
+  .teamGamePanel,
+  .noticeBand,
+  .rankingLeaderPanel,
+  .rankingSummaryGrid article {
+    padding: 20px;
+  }
+
+  .rankingLeaderPanel h2 {
+    font-size: clamp(2rem, 10vw, 3.4rem);
+  }
+
+  .teamProfileLead h2 {
+    font-size: clamp(1.75rem, 8.5vw, 2.65rem);
+    line-height: 1.06;
+  }
+
+  .rankingLeaderPanel strong,
+  .rankingSummaryGrid strong,
+  .teamProfileStats strong,
+  .articleMetricGrid strong {
+    font-size: clamp(1.75rem, 9vw, 2.7rem);
+  }
+
+  .rankingsOverviewGrid,
+  .advancedRankingGrid {
+    gap: 10px;
+    border: 0;
+    background: transparent;
+  }
+
+  .compactRankPanel {
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--color-black);
+  }
+
+  .rankItem {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 13px 0;
+  }
+
+  .rankItem em {
+    padding: 6px 8px;
+    font-size: 0.82rem;
+  }
+
+  .teamPicker {
+    border: 0;
+    background: transparent;
+    gap: 8px;
+    padding-bottom: 2px;
+  }
+
+  .teamPicker button {
+    min-width: 108px;
+    border: 1px solid var(--color-black);
+    padding: 13px 12px;
+  }
+
+  .articleMetricGrid,
+  .advancedMetricGrid {
+    gap: 10px;
+    border: 0;
+    background: transparent;
+  }
+
+  .articleMetricGrid article,
+  .advancedMetricGrid article {
+    border: 1px solid var(--line);
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .tableWrap {
+    margin: 0 -14px;
+    padding: 0 14px 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tableWrap::after {
+    content: "横にスクロールできます";
+    display: block;
+    margin-top: 10px;
+    color: var(--color-dark);
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+
+  table {
+    min-width: 760px;
+  }
+
+  th,
+  td {
+    padding: 16px 12px;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+
+  .teamNameCell {
+    min-width: 150px;
   }
 
   .insightStrip {
