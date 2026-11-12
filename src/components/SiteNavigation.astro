@@ -1,0 +1,48 @@
+---
+import { Activity, BarChart3, CalendarDays, Flag, LayoutGrid, ListOrdered, LockKeyhole, Menu, TrendingUp, Users } from "lucide-react";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const links = [
+  { href: "/", label: "トップ", icon: LayoutGrid },
+  { href: "/dashboard/", label: "ダッシュボード", icon: Activity },
+  { href: "/results/", label: "試合結果", icon: CalendarDays },
+  { href: "/rankings/", label: "ランキング", icon: ListOrdered },
+  { href: "/teams/", label: "チーム", icon: Users },
+  { href: "/analytics/", label: "指標分析", icon: BarChart3 },
+  { href: "/trends/", label: "推移", icon: TrendingUp },
+  { href: "/japan/", label: "日本代表", icon: Flag },
+  { href: "/forecast/", label: "試合予測", icon: LockKeyhole },
+];
+const current = (href: string) => (href.replace(/\/$/, "") || "/") === (path === "/login" ? "/forecast" : path);
+---
+
+<header class="analyzeNav">
+  <div class="analyzeNavInner">
+    <a class="analyzeBrand" href="/" aria-label="NINES ANALYZE トップ">
+      <img src="/nines_analyze_logo_wht.svg?v=20260814" alt="NINES ANALYZE" width="145" height="42" />
+    </a>
+    <nav class="analyzeNavLinks" aria-label="主要ナビゲーション">
+      {links.map(({ href, label }) => (
+        <a href={href} aria-current={current(href) ? "page" : undefined}>{label}</a>
+      ))}
+    </nav>
+    <details class="analyzeMenu">
+      <summary aria-label="メニュー"><Menu size={22} aria-hidden="true" /></summary>
+      <nav aria-label="モバイルナビゲーション">
+        {links.map(({ href, label, icon: Icon }) => (
+          <a href={href} aria-current={current(href) ? "page" : undefined}><Icon size={17} aria-hidden="true" />{label}</a>
+        ))}
+      </nav>
+    </details>
+  </div>
+</header>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>(".analyzeMenu");
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menu?.open) {
+      menu.open = false;
+      menu.querySelector("summary")?.focus();
+    }
+  });
+</script>

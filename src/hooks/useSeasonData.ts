@@ -14,10 +14,14 @@ type ApiTeamRecord = Omit<TeamRecord, "lastFive"> & {
   lastFive?: Array<"W" | "L">;
 };
 
-export type DivisionFilter = "ALL" | "B1" | "B2";
+export type DivisionFilter = "ALL" | "B1" | "B2" | "B.PREMIER" | "B.ONE" | "B.NEXT";
 export type DataSourceState = "loading" | "db" | "mock";
 export type SeasonSeries = Record<SeasonKey, TeamRecord[]>;
 export type AdvancedStatsMap = Record<string, TeamAdvancedStats>;
+
+export function divisionsForSeason(season: SeasonKey): DivisionFilter[] {
+  return season === "2026-27" ? ["ALL", "B.PREMIER", "B.ONE", "B.NEXT"] : ["ALL", "B1", "B2"];
+}
 
 export function useSeasonData(selectedSeason: SeasonKey, selectedDivision: DivisionFilter = "ALL") {
   const fallback = useMemo(

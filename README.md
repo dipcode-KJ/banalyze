@@ -95,6 +95,16 @@ For daily updates, schedule the latest importer with Xserver Cron:
 /usr/bin/php /home/your_account/your_domain/public_html/cron/import-games.php 2025-26 latest
 ```
 
+## Phase 1 forecast members
+
+The private forecast page is available at `/forecast/` and requires an account. Public registration is intentionally disabled; an administrator issues accounts from the server:
+
+```bash
+php cron/create-user.php member@example.com "Member Name" "a-password-at-least-12-chars" member
+```
+
+The `database/phase1-forecast.sql` migration creates users, sessions, and prediction snapshots. The forecast API only uses completed games with `game_date` earlier than the target game date, so future results are not included in the model input.
+
 ## Build for Xserver
 
 ```bash

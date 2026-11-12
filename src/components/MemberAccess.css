@@ -1,0 +1,647 @@
+/* ==========================================================================
+   2026 PRIVATE ANALYTICS & MEMBER PORTAL DESIGN SYSTEM
+   High-Security AI Lab / Precision Predictive Analytics Experience
+   ========================================================================== */
+
+.memberShell,
+.forecastShell {
+  min-height: 100vh;
+  background: var(--analyze-paper, #f8fafc);
+  color: var(--analyze-text-main, #0f172a);
+  padding: clamp(28px, 5vw, 64px) clamp(16px, 4vw, 32px);
+  font-family: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   MEMBER LOGIN
+   -------------------------------------------------------------------------- */
+.memberPanel {
+  max-width: 480px;
+  margin: 6vh auto;
+  background: #ffffff;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 24px;
+  padding: clamp(32px, 6vw, 52px);
+  box-shadow: 0 20px 48px -12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.02);
+  transition: all 0.3s ease;
+}
+
+.memberEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--analyze-action, #ff5722);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.memberPanel h1,
+.forecastHeader h1 {
+  margin: 16px 0 8px;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  line-height: 1.15;
+}
+
+.memberLead {
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 14px;
+  margin: 0;
+}
+
+.memberForm {
+  display: grid;
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.memberForm label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 750;
+  color: #334155;
+}
+
+.memberForm input {
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font: inherit;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.memberForm input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: var(--analyze-action, #ff5722);
+  box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.15);
+}
+
+.memberSubmit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--analyze-action, #ff5722) 0%, var(--analyze-accent, #ff6f3c) 100%);
+  color: #ffffff;
+  padding: 14px 24px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 6px;
+}
+
+.memberSubmit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.45);
+}
+
+.memberSubmit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.memberError {
+  margin: 0;
+  color: #e11d48;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff1f2;
+  border: 1px solid #ffe4e6;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.memberNote {
+  margin: 24px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   FORECAST SHELL & HEADER
+   -------------------------------------------------------------------------- */
+.forecastShell {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.forecastHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--analyze-line, #e2e8f0);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.forecastHeader h1 {
+  margin-bottom: 4px;
+}
+
+.forecastHeader p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.forecastHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.forecastHeaderActions span {
+  padding: 6px 14px;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.forecastHeaderActions button {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.forecastHeaderActions button:hover {
+  border-color: rgba(255, 87, 34, 0.4);
+  color: var(--analyze-action, #ff5722);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   FORECAST INTRO & DATE SELECTION
+   -------------------------------------------------------------------------- */
+.forecastIntro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 32px;
+  align-items: center;
+  padding: 24px 28px;
+  background: #ffffff;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  margin-bottom: 28px;
+}
+
+.forecastIntro div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--analyze-action, #ff5722);
+}
+
+.forecastIntro h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.forecastIntro p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.75;
+  font-size: 13px;
+}
+
+.forecastDateNav {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 32px;
+  padding: 18px 22px;
+  background: #ffffff;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.forecastDateNavIntro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--analyze-action, #ff5722);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.forecastDateButtons {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.forecastDateButtons button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 8px;
+  text-align: left;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #334155;
+  padding: 12px 14px;
+  cursor: pointer;
+  font: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.forecastDateButtons button:hover {
+  border-color: rgba(255, 87, 34, 0.4);
+  background: #fff7f4;
+}
+
+.forecastDateButtons button.is-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--analyze-action, #ff5722) 0%, var(--analyze-accent, #ff6f3c) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+}
+
+.forecastDateButtons strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.forecastDateButtons span {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.forecastDateButtons em {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.forecastDateButtons button.is-active em {
+  color: #ffffff;
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   FORECAST SIGNAL (Deep WebGL Display)
+   -------------------------------------------------------------------------- */
+.forecastSignal {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+  gap: 32px;
+  align-items: center;
+  margin: 0 0 32px;
+  padding: 32px;
+  background: linear-gradient(180deg, #090b10 0%, #141824 100%);
+  color: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.forecastSignalCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.forecastSignalKicker {
+  color: var(--analyze-accent, #ff6f3c);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.forecastSignal h2 {
+  margin: 14px 0 12px;
+  font-size: clamp(26px, 3.8vw, 42px);
+  font-weight: 950;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.forecastSignal h2 em {
+  color: #94a3b8;
+  font-size: 0.6em;
+  font-style: normal;
+}
+
+.forecastSignal p {
+  max-width: 380px;
+  margin: 0;
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.forecastLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+.forecastLegend span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.forecastLegend i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legendHome { background: var(--analyze-action, #ff5722); }
+.legendAway { background: #ffffff; }
+.legendProbability { background: #f59e0b; }
+
+.forecastDayHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+}
+
+.forecastDayHeading span {
+  color: var(--analyze-action, #ff5722);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.forecastDayHeading h2 {
+  margin: 4px 0 0;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+}
+
+.forecastDayHeading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   PREDICTION GRID & CARDS
+   -------------------------------------------------------------------------- */
+.forecastGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.predictionCard {
+  background: #ffffff;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.predictionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+  border-color: rgba(255, 87, 34, 0.3);
+}
+
+.predictionMeta,
+.predictionTeams,
+.predictionScore {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.predictionMeta {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.predictionMeta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.predictionTeams {
+  margin: 22px 0;
+  text-align: center;
+}
+
+.predictionTeams div {
+  display: grid;
+  gap: 4px;
+  min-width: 100px;
+}
+
+.predictionTeams small,
+.predictionScore small {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.predictionTeams strong {
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.predictionTeams b {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.probability {
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 16px 0;
+}
+
+.probability span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.probability strong {
+  float: right;
+  color: var(--analyze-action, #ff5722);
+  font-size: 24px;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+
+.probability > div {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.probability i {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--analyze-action, #ff5722) 0%, var(--analyze-accent, #ff6f3c) 100%);
+  box-shadow: 0 0 10px rgba(255, 87, 34, 0.4);
+}
+
+.predictionScore {
+  padding: 18px 0;
+}
+
+.predictionScore div {
+  display: grid;
+  gap: 4px;
+}
+
+.predictionScore div:last-child {
+  text-align: right;
+}
+
+.predictionScore strong {
+  font-size: 20px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
+details {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 14px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+details summary {
+  cursor: pointer;
+  font-weight: 750;
+  color: #334155;
+  transition: color 0.2s ease;
+}
+
+details summary:hover {
+  color: var(--analyze-action, #ff5722);
+}
+
+details p {
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+
+.forecastState {
+  background: #ffffff;
+  border: 1px solid var(--analyze-line, #e2e8f0);
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.forecastState--error {
+  color: #e11d48;
+  background: #fff1f2;
+  border-color: #ffe4e6;
+}
+
+.forecastFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE DESIGN
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .forecastHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .forecastHeaderActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .forecastIntro,
+  .forecastGrid {
+    grid-template-columns: 1fr;
+  }
+  .forecastSignal {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+  .forecastDateButtons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .forecastDateButtons button:last-child {
+    grid-column: span 2;
+  }
+  .forecastDayHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}

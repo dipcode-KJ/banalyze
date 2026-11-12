@@ -6,7 +6,7 @@ require __DIR__ . '/db.php';
 
 $season = $_GET['season'] ?? '2025-26';
 $division = $_GET['division'] ?? null;
-$division = in_array($division, ['B1', 'B2'], true) ? $division : null;
+$division = in_array($division, ['B1', 'B2', 'B.PREMIER', 'B.ONE', 'B.NEXT'], true) ? $division : null;
 
 $sql = <<<SQL
 SELECT

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ForecastPage from "../components/ForecastPage";
+import "../components/ForecastFix.css";
+---
+
+<BaseLayout title="B.LEAGUE試合予測 | NINES ANALYZE" description="過去のB.LEAGUE試合データから、次の試合の勝率と予想得点差を算出します。" robots="noindex, nofollow" enableAds={false}>
+  <ForecastPage client:load />
+</BaseLayout>
+
+<style is:global>
+  .forecastWebGL {
+    height: 360px;
+    min-height: 0;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
+    contain: strict;
+  }
+
+  .forecastWebGL canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+  }
+
+  @media (max-width: 720px) {
+    .forecastWebGL { height: 260px; }
+  }
+</style>

@@ -1,8 +1,95 @@
 ---
+import SiteNavigation from "../components/SiteNavigation.astro";
+import "../components/AnalyzeTheme.css";
 const {
-  title = "NINES DATA | Bリーグ統計ダッシュボード",
-  description = "Bリーグの試合結果を収集し、勝率・得失点差・ホーム/アウェイ成績を可視化する統計サービスです。",
+  title = "NINES ANALYZE | バスケットボール統計ポータル",
+  description = "Bリーグと男子日本代表の試合記録を収集し、チーム・選手・試合の数字を可視化する統計サービスです。",
+  enableAds = true,
+  lastModified = "2026-08-16",
+  robots = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
 } = Astro.props;
+
+const adsenseClient = "ca-pub-4235643987145102";
+const siteUrl = "https://analyze.kjnine.com";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const ogImageUrl = new URL("/og-image.png", siteUrl).href;
+const pageLabels: Record<string, string> = {
+  "/dashboard/": "Bリーグ成績ダッシュボード",
+  "/teams/": "Bリーグ チーム別スタッツ",
+  "/rankings/": "Bリーグ スタッツランキング",
+  "/japan/": "男子日本代表スタッツ",
+  "/analytics/": "Bリーグ 多角指標分析",
+  "/trends/": "Bリーグ シーズン推移",
+  "/results/": "Bリーグ 試合結果",
+  "/terms/": "利用規約・免責事項",
+  "/privacy/": "プライバシーポリシー",
+};
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: "NINES",
+    url: "https://kjnine.com/",
+    logo: {
+      "@type": "ImageObject",
+      url: `${siteUrl}/favicon@2x.png`,
+      width: 770,
+      height: 770,
+    },
+  },
+  {
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    url: `${siteUrl}/`,
+    name: "NINES ANALYZE",
+    description: "Bリーグとバスケットボール男子日本代表の非公式データ分析ポータル",
+    inLanguage: "ja",
+    publisher: { "@id": `${siteUrl}/#organization` },
+  },
+  {
+    "@type": "WebApplication",
+    "@id": `${siteUrl}/#application`,
+    name: "NINES ANALYZE",
+    url: `${siteUrl}/`,
+    applicationCategory: "SportsApplication",
+    operatingSystem: "Web Browser",
+    isAccessibleForFree: true,
+    inLanguage: "ja",
+    description: "Bリーグと男子日本代表の試合・チーム・選手スタッツを可視化するWebアプリケーション",
+    publisher: { "@id": `${siteUrl}/#organization` },
+  },
+  {
+    "@type": "WebPage",
+    "@id": `${canonicalUrl}#webpage`,
+    url: canonicalUrl,
+    name: title,
+    description,
+    inLanguage: "ja",
+    dateModified: lastModified,
+    isPartOf: { "@id": `${siteUrl}/#website` },
+    primaryImageOfPage: { "@id": `${siteUrl}/#primaryimage` },
+  },
+  {
+    "@type": "ImageObject",
+    "@id": `${siteUrl}/#primaryimage`,
+    url: ogImageUrl,
+    width: 1200,
+    height: 630,
+  },
+];
+
+if (Astro.url.pathname !== "/") {
+  graph.push({
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "NINES ANALYZE", item: `${siteUrl}/` },
+      { "@type": "ListItem", position: 2, name: pageLabels[Astro.url.pathname] ?? title, item: canonicalUrl },
+    ],
+  });
+}
+
+const structuredData = { "@context": "https://schema.org", "@graph": graph };
 ---
 
 <!doctype html>
@@ -11,7 +98,37 @@ const {
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#18181b" />
+    <meta name="google-adsense-account" content={adsenseClient} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="ja" href={canonicalUrl} />
     <link rel="icon" type="image/png" href="/favicon@2x.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:site_name" content="NINES ANALYZE" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NINES ANALYZE バスケットボールデータ分析ポータル" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+    {
+      enableAds && (
+        <script
+          is:inline
+          async
+          crossorigin="anonymous"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+        />
+      )
+    }
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8KJ7QW5VHK"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -21,49 +138,64 @@ const {
       gtag("js", new Date());
       gtag("config", "G-8KJ7QW5VHK");
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <title>{title}</title>
   </head>
   <body>
+    <SiteNavigation />
     <slot />
-    <script is:inline>
-      document.addEventListener("click", (event) => {
-        const button = event.target.closest(".menuButton");
-        const link = event.target.closest(".mobileDrawer a");
-
-        if (button) {
-          const isOpen = document.body.classList.toggle("drawerOpen");
-          button.setAttribute("aria-expanded", String(isOpen));
-        }
-
-        if (link) {
-          document.body.classList.remove("drawerOpen");
-          document.querySelectorAll(".menuButton").forEach((item) => item.setAttribute("aria-expanded", "false"));
-        }
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          document.body.classList.remove("drawerOpen");
-          document.querySelectorAll(".menuButton").forEach((item) => item.setAttribute("aria-expanded", "false"));
-        }
-      });
-    </script>
   </body>
 </html>
 
 <style is:global>
-  * {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
   html {
     font-family:
-      "Noto Sans JP", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
-    background: #ffffff;
+      "Plus Jakarta Sans", "Inter", "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #0b0d13;
+    color: #0f172a;
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
   }
 
   body {
     margin: 0;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  ::selection {
+    background: rgba(255, 107, 53, 0.25);
+    color: #ff5722;
+  }
+
+  /* 2026 Precision Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 </style>

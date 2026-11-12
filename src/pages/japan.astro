@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import JapanPage from "../components/JapanPage";
+import type { NationalTeamPayload } from "../hooks/useNationalTeamData";
+
+const title = "バスケ男子日本代表 試合・選手スタッツ | NINES ANALYZE";
+const description = "バスケットボール男子日本代表の試合結果、対戦国とのチーム比較、選手別ボックススコア、3P・リバウンド・アシストを確認できます。";
+let initialData: NationalTeamPayload | null = null;
+
+try {
+  const response = await fetch("https://analyze.kjnine.com/api/national-team.php?limit=100&players=latest");
+  if (response.ok) initialData = await response.json();
+} catch {
+  initialData = null;
+}
+---
+
+<BaseLayout title={title} description={description}>
+  <JapanPage initialData={initialData} client:load />
+</BaseLayout>

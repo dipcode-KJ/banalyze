@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../api/db.php';
+$root = getenv('NINES_ROOT') ?: dirname(__DIR__);
+require rtrim($root, '/') . '/api/db.php';
 
 // Xserver Cron examples:
 // /usr/bin/php /home/your_account/your_domain/public_html/cron/import-games.php 2025-26 latest
@@ -25,22 +26,33 @@ $months = match ($mode) {
 $pdo = db();
 $pdo->beginTransaction();
 
+$tabDefinitions = $season === '2026-27'
+    ? [
+        1 => ['B.PREMIER', ['2', '3', '7', '8']],
+        3 => ['B.ONE', ['2', '3', '7', '8']],
+        2 => ['B.NEXT', ['2', '3', '7', '8']],
+    ]
+    : [
+        1 => ['B1', ['2', '3']],
+        2 => ['B2', ['7', '8']],
+    ];
+
 try {
     $imported = 0;
     foreach ($months as $month) {
-        foreach ([1 => ['2', '3'], 2 => ['7', '8']] as $tab => $events) {
+        foreach ($tabDefinitions as $tab => [$division, $events]) {
             $days = fetch_days($seasonStartYear, $month, $tab);
             echo sprintf(
                 "[%s] %s month=%s division=%s days=%d\n",
                 date('c'),
                 $season,
                 $month,
-                $tab === 1 ? 'B1' : 'B2',
+                $division,
                 count($days)
             );
             foreach ($days as $day) {
                 foreach ($events as $event) {
-                    $games = fetch_games($seasonStartYear, $season, $month, $day, $tab, $event);
+                    $games = fetch_games($seasonStartYear, $season, $month, $day, $tab, $event, $division);
                     foreach ($games as $game) {
                         upsert_game($pdo, $game);
                         $imported++;
@@ -89,7 +101,7 @@ function fetch_days(int $seasonStartYear, string $month, int $tab): array
     return $days;
 }
 
-function fetch_games(int $seasonStartYear, string $season, string $month, string $day, int $tab, string $event): array
+function fetch_games(int $seasonStartYear, string $season, string $month, string $day, int $tab, string $event, string $division): array
 {
     $json = http_get(BASE_URL . '?' . http_build_query([
         'data_format' => 'json',
@@ -110,7 +122,7 @@ function fetch_games(int $seasonStartYear, string $season, string $month, string
 
     $games = [];
     foreach (($payload['topics'] ?? []) as $topic) {
-        foreach (parse_topic_html((string)$topic, $seasonStartYear, $season, $month, $day, $tab, $event) as $game) {
+        foreach (parse_topic_html((string)$topic, $seasonStartYear, $season, $month, $day, $tab, $event, $division) as $game) {
             $games[] = $game;
         }
     }
@@ -118,7 +130,7 @@ function fetch_games(int $seasonStartYear, string $season, string $month, string
     return $games;
 }
 
-function parse_topic_html(string $html, int $seasonStartYear, string $season, string $month, string $day, int $tab, string $event): array
+function parse_topic_html(string $html, int $seasonStartYear, string $season, string $month, string $day, int $tab, string $event, string $division): array
 {
     if (!str_contains($html, 'list-item')) {
         return [];
@@ -158,7 +170,7 @@ function parse_topic_html(string $html, int $seasonStartYear, string $season, st
             'season' => $season,
             'game_date' => actual_game_date($seasonStartYear, $month, $day),
             'status' => $status,
-            'division' => $tab === 1 ? 'B1' : 'B2',
+            'division' => $division,
             'home_team' => $homeName,
             'away_team' => $awayName,
             'home_score' => $homeScore,

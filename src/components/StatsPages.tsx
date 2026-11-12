@@ -8,10 +8,10 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
-import { useMemo, useState } from "react";
-import { ArrowRight, Menu } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, Copy, Download, Plus, X } from "lucide-react";
 import { Bar, Line, Scatter } from "react-chartjs-2";
-import { pointDiff, seasonLabels, type AdvancedRankingRecord, type SeasonKey, type TeamRecord, winRate } from "../data/mockStats";
+import { pointDiff, seasonLabels, type AdvancedRankingMetric, type AdvancedRankingRecord, type SeasonKey, type TeamRecord, winRate } from "../data/mockStats";
 import { type DataSourceState, type DivisionFilter, useAdvancedRankings, useSeasonData, useSeasonSeries, useTeamAdvancedStats } from "../hooks/useSeasonData";
 import SiteFooter from "./SiteFooter";
 import "./StatsDashboard.css";
@@ -24,20 +24,34 @@ type SortState<Key extends string> = {
   direction: SortDirection;
 };
 type AnalysisSortKey = "composite" | "offense" | "defense" | "winRate" | "homeAwayGap" | "form" | "balance";
-
-const chartPalette = {
-  ink: "#10121d",
-  graphite: "#2f341c",
-  muted: "#e6edcc",
-  neon: "#d7ff00",
-  shade900: "#161d00",
-  shade700: "#334700",
-  shade500: "#5f8000",
-  shade300: "#92bd00",
-  shade100: "#c4ef00",
+type RankingTone = "shooting" | "creation" | "possession" | "offense" | "defense";
+type AdvancedRankingSection = {
+  metric: AdvancedRankingMetric;
+  title: string;
+  label: string;
+  description: string;
+  records: AdvancedRankingRecord[];
+  value: (record: AdvancedRankingRecord) => string;
+  tone: RankingTone;
 };
 
-const shadeScale = ["#161d00", "#243200", "#334700", "#496300", "#5f8000", "#7fa800", "#a5d100", "#d7ff00"];
+const chartPalette = {
+  ink: "#0f172a",
+  graphite: "#334155",
+  muted: "#94a3b8",
+  neon: "#ff5722",
+  offense: "#ff5722",
+  defense: "#f43f5e",
+  possession: "#06b6d4",
+  creation: "#8b5cf6",
+  shade900: "#0f172a",
+  shade700: "#1e293b",
+  shade500: "#ff5722",
+  shade300: "#ff8a50",
+  shade100: "#ffcc80",
+};
+
+const shadeScale = ["#0f172a", "#1e293b", "#334155", "#475569", "#ff8a50", "#ff7043", "#ff5722", "#f43f5e"];
 
 const shadeByIndex = (index: number, total: number) => {
   const scaleIndex = Math.min(shadeScale.length - 1, Math.floor((index / Math.max(1, total - 1)) * (shadeScale.length - 1)));
@@ -57,27 +71,55 @@ const chartOptions = {
   plugins: {
     legend: {
       labels: {
-        color: "#333333",
+        color: "#475569",
         boxWidth: 12,
+        font: {
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
+          weight: 600,
+          size: 12,
+        },
       },
+    },
+    tooltip: {
+      backgroundColor: "#0f172a",
+      titleColor: "#ffffff",
+      bodyColor: "#f1f5f9",
+      padding: 10,
+      cornerRadius: 8,
     },
   },
   scales: {
     x: {
-      ticks: { color: "#333333" },
+      ticks: {
+        color: "#64748b",
+        font: {
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
+          size: 11,
+          weight: 600,
+        },
+      },
       grid: { display: false },
     },
     y: {
-      ticks: { color: "#333333" },
-      grid: { color: "rgba(17, 17, 17, 0.1)" },
+      ticks: {
+        color: "#64748b",
+        font: {
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
+          size: 11,
+        },
+      },
+      grid: { color: "rgba(15, 23, 42, 0.06)" },
     },
   },
 };
 
 export function TeamsPage() {
-  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
-  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2026-27");
+  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("B.PREMIER");
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const [comparisonIds, setComparisonIds] = useState<string[]>([]);
+  const [queryReady, setQueryReady] = useState(false);
+  const [shareState, setShareState] = useState<"idle" | "copied" | "failed">("idle");
   const { teams, recentGames, source } = useSeasonData(selectedSeason, selectedDivision);
   const { series, source: seriesSource } = useSeasonSeries(selectedDivision);
   const { stats: advancedStats, source: advancedSource } = useTeamAdvancedStats(selectedSeason, selectedDivision);
@@ -89,6 +131,52 @@ export function TeamsPage() {
     () => teams.find((team) => team.id === selectedTeamId) ?? winRateTeams[0],
     [selectedTeamId, teams, winRateTeams],
   );
+  const comparisonTeams = useMemo(() => {
+    const ids = comparisonIds.length > 0 ? comparisonIds : winRateTeams.slice(0, 3).map((team) => team.id);
+    return ids
+      .map((id) => teams.find((team) => team.id === id))
+      .filter((team): team is TeamRecord => Boolean(team))
+      .slice(0, 4);
+  }, [comparisonIds, teams, winRateTeams]);
+  const shareUrl = useMemo(
+    () => buildTeamsShareUrl(selectedSeason, selectedDivision, selectedTeam?.id ?? null, comparisonTeams.map((team) => team.id)),
+    [comparisonTeams, selectedDivision, selectedSeason, selectedTeam?.id],
+  );
+
+  useEffect(() => {
+    const query = readTeamsQuery();
+    setSelectedSeason(query.season);
+    setSelectedDivision(query.division);
+    setSelectedTeamId(query.teamId);
+    setComparisonIds(query.compareIds);
+    setQueryReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!queryReady || teams.length === 0) return;
+
+    const validIds = new Set(teams.map((team) => team.id));
+    const fallbackTeamId = winRateTeams[0]?.id ?? teams[0]?.id ?? null;
+
+    if (!selectedTeamId || !validIds.has(selectedTeamId)) {
+      setSelectedTeamId(fallbackTeamId);
+    }
+
+    setComparisonIds((currentIds) => {
+      const validCurrentIds = currentIds.filter((id) => validIds.has(id)).slice(0, 4);
+      if (validCurrentIds.length > 0) {
+        return validCurrentIds;
+      }
+
+      const defaultIds = winRateTeams.slice(0, 3).map((team) => team.id);
+      return defaultIds.length > 0 ? defaultIds : fallbackTeamId ? [fallbackTeamId] : [];
+    });
+  }, [queryReady, selectedTeamId, teams, winRateTeams]);
+
+  useEffect(() => {
+    if (!queryReady) return;
+    syncTeamsQuery(selectedSeason, selectedDivision, selectedTeam?.id ?? null, comparisonTeams.map((team) => team.id));
+  }, [comparisonTeams, queryReady, selectedDivision, selectedSeason, selectedTeam?.id]);
 
   if (!selectedTeam) {
     return (
@@ -258,6 +346,118 @@ export function TeamsPage() {
       },
     ],
   };
+  const comparisonSummaryData = {
+    labels: comparisonTeams.map((team) => team.shortName),
+    datasets: [
+      {
+        label: "勝率",
+        data: comparisonTeams.map((team) => Number((winRate(team) * 100).toFixed(1))),
+        backgroundColor: comparisonTeams.map((_, index) => (index === 0 ? chartPalette.neon : shadeByIndex(index, Math.max(1, comparisonTeams.length)))),
+        borderColor: chartPalette.ink,
+        borderWidth: 1,
+      },
+      {
+        label: "得失点差 / 試合",
+        data: comparisonTeams.map((team) => {
+          const games = team.wins + team.losses;
+          return Number((games > 0 ? pointDiff(team) / games : 0).toFixed(1));
+        }),
+        backgroundColor: comparisonTeams.map((_, index) => shadeByIndex(index + 2, Math.max(1, comparisonTeams.length + 2))),
+        borderColor: chartPalette.ink,
+        borderWidth: 1,
+      },
+    ],
+  };
+  const comparisonSplitData = {
+    labels: comparisonTeams.map((team) => team.shortName),
+    datasets: [
+      {
+        label: "HOME勝率",
+        data: comparisonTeams.map((team) => Number((rate(team.homeWins, team.homeWins + team.homeLosses) * 100).toFixed(1))),
+        backgroundColor: chartPalette.neon,
+        borderColor: chartPalette.ink,
+        borderWidth: 1,
+      },
+      {
+        label: "AWAY勝率",
+        data: comparisonTeams.map((team) => Number((rate(team.awayWins, team.awayWins + team.awayLosses) * 100).toFixed(1))),
+        backgroundColor: chartPalette.shade500,
+        borderColor: chartPalette.ink,
+        borderWidth: 1,
+      },
+    ],
+  };
+  const comparisonEfficiencyData = {
+    datasets: comparisonTeams.map((team, index) => {
+      const stats = advancedStats[team.id] ?? null;
+      return {
+        label: team.shortName,
+        data: [
+          {
+            x: Number((stats?.offensiveRating ?? avgFor(team)).toFixed(1)),
+            y: Number((stats?.defensiveRating ?? avgAgainst(team)).toFixed(1)),
+          },
+        ],
+        backgroundColor: index === 0 ? chartPalette.neon : comparisonColor(index),
+        borderColor: chartPalette.ink,
+        borderWidth: 1,
+        pointRadius: 9,
+        pointHoverRadius: 11,
+      };
+    }),
+  };
+  const comparisonRows = comparisonTeams.map((team) => {
+    const games = team.wins + team.losses;
+    const stats = advancedStats[team.id] ?? null;
+
+    return {
+      team,
+      games,
+      winRate: winRate(team) * 100,
+      margin: pointDiff(team),
+      marginPerGame: games > 0 ? pointDiff(team) / games : 0,
+      homeRate: rate(team.homeWins, team.homeWins + team.homeLosses) * 100,
+      awayRate: rate(team.awayWins, team.awayWins + team.awayLosses) * 100,
+      assists: stats?.assists ?? null,
+      turnovers: stats?.turnovers ?? null,
+      threePointPercentage: stats?.threePointPercentage ?? null,
+      pace: stats?.pace ?? null,
+      offensiveRating: stats?.offensiveRating ?? null,
+      defensiveRating: stats?.defensiveRating ?? null,
+    };
+  });
+
+  function toggleComparisonTeam(teamId: string) {
+    setComparisonIds((currentIds) => {
+      if (currentIds.includes(teamId)) {
+        return currentIds.filter((id) => id !== teamId);
+      }
+
+      return [...currentIds, teamId].slice(0, 4);
+    });
+  }
+
+  function selectFeaturedTeam(teamId: string) {
+    setSelectedTeamId(teamId);
+    setComparisonIds((currentIds) => {
+      if (currentIds.includes(teamId)) {
+        return currentIds;
+      }
+
+      return [teamId, ...currentIds].slice(0, 4);
+    });
+  }
+
+  async function copyShareUrl() {
+    try {
+      await copyText(shareUrl);
+      setShareState("copied");
+      window.setTimeout(() => setShareState("idle"), 1600);
+    } catch {
+      setShareState("failed");
+      window.setTimeout(() => setShareState("idle"), 1600);
+    }
+  }
 
   return (
     <PageFrame
@@ -284,6 +484,123 @@ export function TeamsPage() {
             </button>
           ))}
         </div>
+
+        <section className="teamComparePanel" aria-label="チーム比較">
+          <div className="sectionHeader">
+            <div>
+              <p>Compare Mode</p>
+              <h2>気になるチームを横に並べて見る。</h2>
+              <small>最大4チームまで選択できます。URLに条件が反映されるので、記事やSNSから同じ表示状態を共有できます。</small>
+            </div>
+            <button className="shareButton" onClick={copyShareUrl} type="button">
+              {shareState === "copied" ? <Check size={16} /> : <Copy size={16} />}
+              {shareState === "copied" ? "コピー済み" : shareState === "failed" ? "コピー失敗" : "共有URL"}
+            </button>
+          </div>
+          <div className="comparisonPicker" aria-label="比較チーム選択">
+            {winRateTeams.map((team) => {
+              const isCompared = comparisonTeams.some((comparisonTeam) => comparisonTeam.id === team.id);
+              const isDisabled = !isCompared && comparisonTeams.length >= 4;
+
+              return (
+                <button
+                  aria-pressed={isCompared}
+                  className={isCompared ? "active" : ""}
+                  disabled={isDisabled}
+                  key={team.id}
+                  onClick={() => toggleComparisonTeam(team.id)}
+                  type="button"
+                >
+                  {isCompared ? <X size={14} /> : <Plus size={14} />}
+                  <span>{team.shortName}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="comparisonCards">
+            {comparisonRows.map((row) => (
+              <article className={selectedTeam.id === row.team.id ? "active" : ""} key={row.team.id}>
+                <button onClick={() => selectFeaturedTeam(row.team.id)} type="button">
+                  <span>{selectedTeam.id === row.team.id ? "表示中" : "詳細を見る"}</span>
+                  <strong>{row.team.shortName}</strong>
+                </button>
+                <dl>
+                  <div>
+                    <dt>勝率</dt>
+                    <dd>{row.winRate.toFixed(1)}%</dd>
+                  </div>
+                  <div>
+                    <dt>得失点差</dt>
+                    <dd>{row.margin}</dd>
+                  </div>
+                  <div>
+                    <dt>ORtg</dt>
+                    <dd>{formatAdvancedValue(row.offensiveRating)}</dd>
+                  </div>
+                  <div>
+                    <dt>PACE</dt>
+                    <dd>{formatAdvancedValue(row.pace)}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
+          <div className="comparisonGrid">
+            <DataPanel label="Win / Margin" title="勝率と得失点差を比較" description="勝敗の結果と、試合内容に近い得失点差を同時に確認します。">
+              <div className="chartBox compactChart">
+                <Bar data={comparisonSummaryData} options={chartOptions} />
+              </div>
+            </DataPanel>
+            <DataPanel label="Home / Away" title="開催地別の強さを比較" description="HOMEとAWAYの勝率を並べ、会場条件による差を見ます。">
+              <div className="chartBox compactChart">
+                <Bar data={comparisonSplitData} options={chartOptions} />
+              </div>
+            </DataPanel>
+            <DataPanel label="ORtg / DRtg Map" title="攻守効率で比較" description="右に行くほど攻撃効率が高く、上に行くほど守備効率が良い配置です。">
+              <div className="chartBox compactChart">
+                <Scatter data={comparisonEfficiencyData} options={efficiencyScatterOptions} />
+              </div>
+            </DataPanel>
+          </div>
+          <div className="tableWrap comparisonTableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>チーム</th>
+                  <th>勝敗</th>
+                  <th>勝率</th>
+                  <th>得失点差</th>
+                  <th>HOME</th>
+                  <th>AWAY</th>
+                  <th>AST</th>
+                  <th>TO</th>
+                  <th>3P%</th>
+                  <th>PACE</th>
+                  <th>ORtg</th>
+                  <th>DRtg</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonRows.map((row) => (
+                  <tr className={selectedTeam.id === row.team.id ? "selectedRow" : ""} key={row.team.id}>
+                    <TeamNameCell name={row.team.name} shortName={row.team.shortName} />
+                    <td>{row.team.wins}-{row.team.losses}</td>
+                    <td>{row.winRate.toFixed(1)}%</td>
+                    <td>{row.margin}</td>
+                    <td>{row.homeRate.toFixed(1)}%</td>
+                    <td>{row.awayRate.toFixed(1)}%</td>
+                    <td>{formatAdvancedValue(row.assists)}</td>
+                    <td>{formatAdvancedValue(row.turnovers)}</td>
+                    <td>{formatPercentageValue(row.threePointPercentage)}</td>
+                    <td>{formatAdvancedValue(row.pace)}</td>
+                    <td>{formatAdvancedValue(row.offensiveRating)}</td>
+                    <td>{formatAdvancedValue(row.defensiveRating)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <div className="teamProfile">
           <div className="teamProfileLead">
@@ -423,8 +740,10 @@ export function TeamsPage() {
 }
 
 export function RankingsPage() {
-  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
-  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2026-27");
+  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("B.PREMIER");
+  const [activeMetric, setActiveMetric] = useState<AdvancedRankingMetric>("three_point_percentage");
+  const [rankingActionState, setRankingActionState] = useState<"idle" | "copied" | "saved" | "failed">("idle");
   const { teams, source: teamSource } = useSeasonData(selectedSeason, selectedDivision);
   const { records: shootingRecords, source: shootingSource } = useAdvancedRankings(selectedSeason, selectedDivision, "three_point_percentage", 10);
   const { records: assistRecords, source: assistSource } = useAdvancedRankings(selectedSeason, selectedDivision, "assists", 10);
@@ -442,56 +761,95 @@ export function RankingsPage() {
     mergeSource(mergeSource(shootingSource, assistSource), mergeSource(reboundSource, offensiveRatingSource)),
     defensiveRatingSource,
   );
-  const advancedRankingSections = [
+  const advancedRankingSections: AdvancedRankingSection[] = [
     {
+      metric: "three_point_percentage" as const,
       title: "3P成功率 TOP10",
       label: "3P%",
       description: "3P成功率が高い順。3PM/3PAと合わせて精度を確認できます。",
       records: shootingRecords,
       value: (record: AdvancedRankingRecord) => formatPercentageValue(record.value),
+      tone: "shooting",
     },
     {
+      metric: "assists" as const,
       title: "アシストランキング TOP10",
       label: "AST",
       description: "平均アシスト数が多い順。チームオフェンスの連動性を見る入口です。",
       records: assistRecords,
       value: (record: AdvancedRankingRecord) => formatAdvancedValue(record.value),
+      tone: "creation",
     },
     {
+      metric: "total_rebounds" as const,
       title: "リバウンドランキング TOP10",
       label: "REB",
       description: "平均総リバウンド数が多い順。ポゼッション確保力を確認できます。",
       records: reboundRecords,
       value: (record: AdvancedRankingRecord) => formatAdvancedValue(record.value),
+      tone: "possession",
     },
     {
+      metric: "offensive_rating" as const,
       title: "オフェンスレーティング TOP10",
       label: "ORtg",
       description: "100ポゼッションあたりの得点効率が高い順です。",
       records: offensiveRatingRecords,
       value: (record: AdvancedRankingRecord) => formatAdvancedValue(record.value),
+      tone: "offense",
     },
     {
+      metric: "defensive_rating" as const,
       title: "ディフェンスレーティング TOP10",
       label: "DRtg",
       description: "100ポゼッションあたりの失点効率が低い順です。",
       records: defensiveRatingRecords,
       value: (record: AdvancedRankingRecord) => formatAdvancedValue(record.value),
+      tone: "defense",
     },
   ];
+  const activeSection = advancedRankingSections.find((section) => section.metric === activeMetric) ?? advancedRankingSections[0];
+  const activeRecords = activeSection.records.slice(0, 10);
+  const activeLeader = activeRecords[0] ?? null;
+  const activeLeaderTeam = activeLeader ? teams.find((team) => team.id === activeLeader.teamId || team.shortName === activeLeader.shortName) : null;
+  const activeLeaderStandingRank = activeLeaderTeam ? rankOf(standings, activeLeaderTeam) : null;
+  const activeChartLabel = activeSection.label;
+  const rankingInsights = buildRankingInsights(activeSection, activeLeader, activeLeaderStandingRank, standingsLeader, selectedSeason, selectedDivision);
 
   const rankingData = {
-    labels: chartRecords.map((record) => record.shortName),
+    labels: activeRecords.map((record) => record.shortName),
     datasets: [
       {
-        label: "3P成功率",
-        data: chartRecords.map((record) => record.threePointPercentage ?? 0),
-        backgroundColor: chartRecords.map((_, index) => (index === 0 ? chartPalette.neon : shadeByIndex(index, Math.max(1, chartRecords.length)))),
+        label: activeSection.title.replace(" TOP10", ""),
+        data: activeRecords.map((record) => record.value ?? 0),
+        backgroundColor: activeRecords.map((_, index) => (index === 0 ? metricToneColor(activeSection.tone) : shadeByIndex(index, Math.max(1, activeRecords.length)))),
         borderColor: chartPalette.ink,
         borderWidth: 1,
       },
     ],
   };
+
+  async function copyRankingText() {
+    try {
+      await copyText(buildRankingCopy(activeSection, selectedSeason, selectedDivision));
+      setRankingActionState("copied");
+      window.setTimeout(() => setRankingActionState("idle"), 1600);
+    } catch {
+      setRankingActionState("failed");
+      window.setTimeout(() => setRankingActionState("idle"), 1600);
+    }
+  }
+
+  function saveRankingImage() {
+    try {
+      exportRankingPng(activeSection, selectedSeason, selectedDivision);
+      setRankingActionState("saved");
+      window.setTimeout(() => setRankingActionState("idle"), 1600);
+    } catch {
+      setRankingActionState("failed");
+      window.setTimeout(() => setRankingActionState("idle"), 1600);
+    }
+  }
 
   return (
     <PageFrame
@@ -505,6 +863,79 @@ export function RankingsPage() {
       calculationTitle="勝率 = 勝利数 ÷ 試合数"
       calculationDescription="基本順位に加えて、3P成功率、AST、REB、ORtg、DRtgのTOP10をAPIから表示します。"
     >
+      <section className="rankingWorkbench" aria-label="ランキング素材作成">
+        <div className="rankingWorkbenchHeader">
+          <div>
+            <p>Article Ready Rankings</p>
+            <h2>記事に使うランキングを一発で整える。</h2>
+            <small>指標を切り替えるとTOP10、グラフ、コピー文、保存用カードが同じ条件で更新されます。</small>
+          </div>
+          <div className="rankingActions">
+            <button onClick={copyRankingText} type="button">
+              {rankingActionState === "copied" ? <Check size={16} /> : <Copy size={16} />}
+              {rankingActionState === "copied" ? "コピー済み" : "ブログ用コピー"}
+            </button>
+            <button onClick={saveRankingImage} type="button">
+              {rankingActionState === "saved" ? <Check size={16} /> : <Download size={16} />}
+              {rankingActionState === "saved" ? "保存済み" : "画像保存"}
+            </button>
+          </div>
+        </div>
+        <div className="metricTabs" role="tablist" aria-label="ランキング指標">
+          {advancedRankingSections.map((section) => (
+            <button
+              aria-selected={activeMetric === section.metric}
+              className={activeMetric === section.metric ? `active ${section.tone}` : section.tone}
+              key={section.metric}
+              onClick={() => setActiveMetric(section.metric)}
+              role="tab"
+              type="button"
+            >
+              <span>{section.label}</span>
+              <strong>{section.title.replace(" TOP10", "")}</strong>
+            </button>
+          ))}
+        </div>
+        <div className="rankingWorkbenchGrid">
+          <div className={`rankingExportCard ${activeSection.tone}`}>
+            <span>{selectedSeason} / {selectedDivision}</span>
+            <h2>{activeSection.title}</h2>
+            <p>{activeSection.description}</p>
+            <div className="rankingExportList">
+              {activeRecords.length > 0 ? (
+                activeRecords.map((record) => (
+                  <article key={`${record.metric}-export-${record.teamId}`}>
+                    <span>{String(record.rank).padStart(2, "0")}</span>
+                    <strong>{record.shortName}</strong>
+                    <em>{activeSection.value(record)}</em>
+                  </article>
+                ))
+              ) : (
+                <article>
+                  <span>--</span>
+                  <strong>未取得</strong>
+                  <em>-</em>
+                </article>
+              )}
+            </div>
+            <small>NINES ANALYZE / analyze.kjnine.com</small>
+          </div>
+          <div className="rankingInsightPanel">
+            <p>Reading Points</p>
+            <h2>このランキングの見どころ</h2>
+            <div className="insightCardGrid">
+              {rankingInsights.map((insight) => (
+                <article key={insight.title}>
+                  <span>{insight.label}</span>
+                  <strong>{insight.title}</strong>
+                  <small>{insight.description}</small>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="rankingHeroGrid">
         <div className="rankingLeaderPanel">
           <p>Standings Leader</p>
@@ -542,7 +973,7 @@ export function RankingsPage() {
         <RankingListPanel title="平均失点 TOP10" label="Defense" records={defenseRankings} value={(team) => avgAgainst(team).toFixed(1)} />
       </section>
 
-      <section className="advancedRankingGrid">
+      <section className="advancedRankingGrid compactAdvancedGrid">
         {advancedRankingSections.map((section) => (
           <AdvancedRankingPanel
             description={section.description}
@@ -598,24 +1029,24 @@ export function RankingsPage() {
       </section>
 
       <section className="dataGrid twoColumns">
-        <DataPanel label="3P Percentage" title="3P成功率ランキング" description="成功率の高いチームを上位から表示します。試投数も合わせて見ると、精度とボリュームの両方を確認できます。">
+        <DataPanel label={activeChartLabel} title={`${activeSection.title} グラフ`} description="タブで選択中のランキングをグラフ化します。記事に貼る前の数字確認にも使えます。">
           <div className="chartBox">
             <Bar data={rankingData} options={chartOptions} />
           </div>
         </DataPanel>
         <div className="rankPanel">
           <p>Top 10</p>
-          <h2>3P成功率ランキング</h2>
-          <small>3PM、3PA、3P%を同じ行で確認できます。</small>
-          <div className={chartRecords.length <= 10 ? "rankScroll rankScrollFull" : "rankScroll"}>
-            {chartRecords.map((record) => (
+          <h2>{activeSection.title}</h2>
+          <small>{activeSection.description}</small>
+          <div className={activeRecords.length <= 10 ? "rankScroll rankScrollFull" : "rankScroll"}>
+            {activeRecords.map((record) => (
               <article className="rankItem shootingRankItem" key={record.teamId}>
                 <span>{String(record.rank).padStart(2, "0")}</span>
                 <strong>
                   {record.shortName}
                   <small>{record.conference ?? record.division ?? "Division未設定"}</small>
                 </strong>
-                <em>{formatPercentageValue(record.threePointPercentage)}</em>
+                <em>{activeSection.value(record)}</em>
               </article>
             ))}
           </div>
@@ -735,6 +1166,133 @@ function AdvancedRankingPanel({
   );
 }
 
+function buildRankingCopy(section: AdvancedRankingSection, season: SeasonKey, division: DivisionFilter) {
+  const rows = section.records
+    .slice(0, 10)
+    .map((record) => `${record.rank}. ${record.shortName} ${section.value(record)}`)
+    .join("\n");
+
+  return [
+    `${season} ${division} ${section.title}`,
+    "",
+    rows || "データ未取得",
+    "",
+    "データ: NINES ANALYZE",
+    "https://analyze.kjnine.com/rankings/",
+  ].join("\n");
+}
+
+function buildRankingInsights(
+  section: AdvancedRankingSection,
+  leader: AdvancedRankingRecord | null,
+  leaderStandingRank: number | "-" | null,
+  standingsLeader: TeamRecord | null,
+  season: SeasonKey,
+  division: DivisionFilter,
+) {
+  const leaderText = leader ? `${leader.shortName}が${section.value(leader)}でトップ。` : "まだランキングデータを取得できていません。";
+  const standingText =
+    leader && leaderStandingRank && leaderStandingRank !== "-"
+      ? `基本順位では${leaderStandingRank}位なので、勝率だけでは見えない強みとして読めます。`
+      : "順位表と重ねると、指標単体では見えない差が出ます。";
+  const standingsLeaderText = standingsLeader
+    ? `勝率トップは${standingsLeader.shortName}。${section.label}トップと同じかどうかを見ると記事の切り口になります。`
+    : "勝率トップとの比較は、記事の導入に使いやすい視点です。";
+
+  return [
+    {
+      label: "Leader",
+      title: leader?.shortName ?? "未取得",
+      description: leaderText,
+    },
+    {
+      label: "Context",
+      title: `${season} / ${division}`,
+      description: section.metric === "defensive_rating" ? "DRtgは低いほど優秀です。ランキングは昇順で表示しています。" : standingText,
+    },
+    {
+      label: "Article Hook",
+      title: "勝率と比べる",
+      description: standingsLeaderText,
+    },
+  ];
+}
+
+function exportRankingPng(section: AdvancedRankingSection, season: SeasonKey, division: DivisionFilter) {
+  if (typeof document === "undefined") return;
+
+  const canvas = document.createElement("canvas");
+  const scale = 2;
+  const width = 1200;
+  const height = 675;
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+
+  context.scale(scale, scale);
+  context.fillStyle = "#f7f7f6";
+  context.fillRect(0, 0, width, height);
+  context.fillStyle = "#18181b";
+  context.fillRect(0, 0, width, 118);
+  context.fillStyle = metricToneColor(section.tone);
+  context.fillRect(0, 114, width, 8);
+  context.fillStyle = "#ffffff";
+  context.font = "900 54px Arial, sans-serif";
+  context.fillText(section.title, 52, 72);
+  context.fillStyle = "rgba(255,255,255,0.72)";
+  context.font = "700 22px Arial, sans-serif";
+  context.fillText(`${season} / ${division} / NINES ANALYZE`, 54, 102);
+
+  const rows = section.records.slice(0, 10);
+  rows.forEach((record, index) => {
+    const y = 152 + index * 44;
+    context.fillStyle = index % 2 === 0 ? "#ffffff" : "#f4efec";
+    context.fillRect(48, y - 28, width - 96, 40);
+    context.fillStyle = metricToneColor(section.tone);
+    context.fillRect(48, y - 28, 8, 40);
+    context.fillStyle = "#18181b";
+    context.font = "900 24px Arial, sans-serif";
+    context.fillText(String(record.rank).padStart(2, "0"), 76, y);
+    context.font = "900 28px Arial, sans-serif";
+    context.fillText(record.shortName, 150, y);
+    context.textAlign = "right";
+    context.fillText(section.value(record), width - 80, y);
+    context.textAlign = "left";
+  });
+
+  context.fillStyle = "#18181b";
+  context.font = "800 20px Arial, sans-serif";
+  context.fillText("analyze.kjnine.com", 52, height - 42);
+  context.textAlign = "right";
+  context.fillText("B.LEAGUE DATA PORTAL", width - 52, height - 42);
+
+  const link = document.createElement("a");
+  link.download = `${season}-${section.metric}-top10.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+function metricToneColor(tone: RankingTone) {
+  switch (tone) {
+    case "offense":
+      return chartPalette.offense;
+    case "defense":
+      return chartPalette.defense;
+    case "possession":
+      return chartPalette.possession;
+    case "creation":
+      return chartPalette.creation;
+    case "shooting":
+      return chartPalette.neon;
+  }
+}
+
+function comparisonColor(index: number) {
+  const colors = [chartPalette.offense, chartPalette.creation, chartPalette.possession, chartPalette.defense, chartPalette.shade500];
+  return colors[index % colors.length];
+}
+
 function TeamNameCell({ name, shortName }: { name: string; shortName: string }) {
   const showName = normalizeTeamLabel(name) !== normalizeTeamLabel(shortName);
 
@@ -747,8 +1305,8 @@ function TeamNameCell({ name, shortName }: { name: string; shortName: string }) 
 }
 
 export function TrendsPage() {
-  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
-  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2026-27");
+  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("B.PREMIER");
   const { teams, source } = useSeasonData(selectedSeason, selectedDivision);
   const { series, source: seriesSource } = useSeasonSeries(selectedDivision);
   const sortedTeams = useMemo(() => [...teams].sort((a, b) => winRate(b) - winRate(a)), [teams]);
@@ -828,8 +1386,8 @@ export function TrendsPage() {
 }
 
 export function ResultsPage() {
-  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
-  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2026-27");
+  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("B.PREMIER");
   const { recentGames: games, source } = useSeasonData(selectedSeason, selectedDivision);
   const chartGames = games.slice(0, 12);
   const highScoreGames = [...games].sort((a, b) => b.homeScore + b.awayScore - (a.homeScore + a.awayScore));
@@ -908,8 +1466,8 @@ export function ResultsPage() {
 }
 
 export function AnalyticsPage() {
-  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
-  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2026-27");
+  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("B.PREMIER");
   const [analysisSort, setAnalysisSort] = useState<SortState<AnalysisSortKey>>({ key: "composite", direction: "desc" });
   const { teams, source } = useSeasonData(selectedSeason, selectedDivision);
   const profiles = useMemo(
@@ -1095,29 +1653,6 @@ function PageFrame({
 }) {
   return (
     <main className="dashboard statPage">
-      <header className="siteHeader">
-        <a className="brand" href="/">
-          <img alt="NINES ANALYZE" src="/nines_analyze_logo.svg" />
-        </a>
-        <nav className="siteNav" aria-label="主要ナビゲーション">
-          <a href="/"><span>Home</span><small>使い方</small></a>
-          <a href="/dashboard"><span>Dashboard</span><small>全体</small></a>
-          <a href="/teams"><span>Teams</span><small>チーム</small></a>
-          <a href="/rankings"><span>Rankings</span><small>順位</small></a>
-          <a href="/analytics"><span>Analytics</span><small>分析</small></a>
-          <a href="/trends"><span>Trends</span><small>推移</small></a>
-          <a href="/results"><span>Results</span><small>結果</small></a>
-        </nav>
-        <a className="headerCta" href="https://kjnine.com" rel="noreferrer" target="_blank">
-          KJ9へ
-          <ArrowRight size={14} />
-        </a>
-        <button className="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
-          <Menu size={22} />
-        </button>
-        <MobileDrawer />
-      </header>
-
       <section className="pageHero">
         <div>
           <p className="eyebrow">{eyebrow}</p>
@@ -1137,7 +1672,7 @@ function PageFrame({
               </button>
             ))}
           </div>
-          <DivisionSwitch activeDivision={activeDivision} onDivisionChange={onDivisionChange} />
+          <DivisionSwitch activeSeason={activeSeason} activeDivision={activeDivision} onDivisionChange={onDivisionChange} />
         </div>
       </section>
 
@@ -1275,42 +1810,115 @@ function sourceDescription(source: DataSourceState) {
   return "API取得に失敗した場合のサンプル表示です。公開前にDB/APIの状態を確認してください。";
 }
 
-function MobileDrawer() {
-  return (
-    <div className="mobileDrawer" id="mobile-drawer">
-      <div className="mobileDrawerTop">
-        <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
-        <span>Menu</span>
-      </div>
-      <nav className="mobileDrawerNav" aria-label="モバイルナビゲーション">
-        <a href="/"><span>01</span><strong>Home<small>使い方</small></strong></a>
-        <a href="/dashboard"><span>02</span><strong>Dashboard<small>全体</small></strong></a>
-        <a href="/teams"><span>03</span><strong>Teams<small>チーム</small></strong></a>
-        <a href="/rankings"><span>04</span><strong>Rankings<small>順位</small></strong></a>
-        <a href="/analytics"><span>05</span><strong>Analytics<small>分析</small></strong></a>
-        <a href="/trends"><span>06</span><strong>Trends<small>推移</small></strong></a>
-        <a href="/results"><span>07</span><strong>Results<small>結果</small></strong></a>
-        <a href="/terms"><span>08</span><strong>Terms<small>規約</small></strong></a>
-        <a href="/privacy"><span>09</span><strong>Privacy<small>方針</small></strong></a>
-      </nav>
-      <a className="mobileDrawerContact" href="https://kjnine.com" rel="noreferrer" target="_blank">
-        KJ9サイトへ
-        <ArrowRight size={18} />
-      </a>
-    </div>
-  );
+function readTeamsQuery() {
+  const defaultState = {
+    season: "2026-27" as SeasonKey,
+    division: "B.PREMIER" as DivisionFilter,
+    teamId: null as string | null,
+    compareIds: [] as string[],
+  };
+
+  if (typeof window === "undefined") {
+    return defaultState;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const season = parseSeason(params.get("season")) ?? defaultState.season;
+  const division = parseDivision(params.get("division")) ?? defaultState.division;
+  const teamId = sanitizeId(params.get("team"));
+  const compareIds = (params.get("compare") ?? "")
+    .split(",")
+    .map((value) => sanitizeId(value))
+    .filter((value): value is string => Boolean(value))
+    .slice(0, 4);
+
+  return { season, division, teamId, compareIds };
+}
+
+function buildTeamsShareUrl(season: SeasonKey, division: DivisionFilter, teamId: string | null, compareIds: string[]) {
+  if (typeof window === "undefined") {
+    return "/teams";
+  }
+
+  const url = new URL("/teams", window.location.origin);
+  url.searchParams.set("season", season);
+  if (division !== "ALL") {
+    url.searchParams.set("division", division);
+  }
+  if (teamId) {
+    url.searchParams.set("team", teamId);
+  }
+  if (compareIds.length > 0) {
+    url.searchParams.set("compare", compareIds.join(","));
+  }
+
+  return url.toString();
+}
+
+function syncTeamsQuery(season: SeasonKey, division: DivisionFilter, teamId: string | null, compareIds: string[]) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const nextUrl = buildTeamsShareUrl(season, division, teamId, compareIds);
+  if (nextUrl !== window.location.href) {
+    window.history.replaceState(null, "", nextUrl);
+  }
+}
+
+function parseSeason(value: string | null): SeasonKey | null {
+  return seasonLabels.includes(value as SeasonKey) ? (value as SeasonKey) : null;
+}
+
+function parseDivision(value: string | null): DivisionFilter | null {
+  return ["ALL", "B1", "B2", "B.PREMIER", "B.ONE", "B.NEXT"].includes(value ?? "") ? (value as DivisionFilter) : null;
+}
+
+function sanitizeId(value: string | null) {
+  const trimmed = value?.trim() ?? "";
+  return /^[a-z0-9-]+$/i.test(trimmed) ? trimmed : null;
+}
+
+async function copyText(value: string) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(value);
+      return;
+    } catch {
+      // Fall back for local previews or browsers that block clipboard permissions.
+    }
+  }
+
+  const textArea = document.createElement("textarea");
+  textArea.value = value;
+  textArea.setAttribute("readonly", "");
+  textArea.style.position = "fixed";
+  textArea.style.opacity = "0";
+  document.body.appendChild(textArea);
+  textArea.select();
+  const copyCommand = (document as unknown as { execCommand: (commandId: string) => boolean }).execCommand.bind(document);
+  const copied = copyCommand("copy");
+  document.body.removeChild(textArea);
+
+  if (!copied) {
+    throw new Error("Copy failed");
+  }
 }
 
 function DivisionSwitch({
+  activeSeason,
   activeDivision,
   onDivisionChange,
 }: {
+  activeSeason: SeasonKey;
   activeDivision: DivisionFilter;
   onDivisionChange: (division: DivisionFilter) => void;
 }) {
+  const divisionOptions = (activeSeason === "2026-27" ? ["ALL", "B.PREMIER", "B.ONE", "B.NEXT"] : ["ALL", "B1", "B2"]) as DivisionFilter[];
+
   return (
     <div className="divisionSwitch compactSwitch" aria-label="ディビジョン選択">
-      {(["ALL", "B1", "B2"] as DivisionFilter[]).map((division) => (
+      {divisionOptions.map((division) => (
         <button
           aria-pressed={activeDivision === division}
           className={activeDivision === division ? "active" : ""}
@@ -1361,6 +1969,32 @@ const scatterOptions = {
     y: {
       reverse: true,
       title: { display: true, text: "平均失点", color: chartPalette.ink },
+      ticks: { color: chartPalette.graphite },
+      grid: { color: "rgba(17, 17, 17, 0.1)" },
+    },
+  },
+};
+
+const efficiencyScatterOptions = {
+  ...chartOptions,
+  plugins: {
+    ...chartOptions.plugins,
+    legend: {
+      labels: {
+        color: chartPalette.ink,
+        boxWidth: 10,
+      },
+    },
+  },
+  scales: {
+    x: {
+      title: { display: true, text: "ORtg / 攻撃効率", color: chartPalette.ink },
+      ticks: { color: chartPalette.graphite },
+      grid: { color: "rgba(17, 17, 17, 0.1)" },
+    },
+    y: {
+      reverse: true,
+      title: { display: true, text: "DRtg / 守備効率", color: chartPalette.ink },
       ticks: { color: chartPalette.graphite },
       grid: { color: "rgba(17, 17, 17, 0.1)" },
     },

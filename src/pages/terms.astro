@@ -3,49 +3,11 @@ import SiteFooter from "../components/SiteFooter";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../components/StatsDashboard.css";
 
-const updatedAt = "2026年5月25日";
+const updatedAt = "2026年8月16日";
 ---
 
-<BaseLayout title="利用規約・免責事項 | NINES DATA" description="NINES DATA ANALYZEの利用規約、免責事項、データ出典、非公式サイトであることについて説明します。">
+<BaseLayout enableAds={false} title="利用規約・免責事項 | NINES ANALYZE" description="NINES ANALYZEの利用規約、免責事項、Bリーグ・JBA公開データの出典、非公式サイトとしての位置づけを説明します。">
   <main class="legalPage">
-    <header class="siteHeader">
-      <a class="brand" href="/">
-        <img alt="NINES ANALYZE" src="/nines_analyze_logo.svg" />
-      </a>
-      <nav class="siteNav" aria-label="主要ナビゲーション">
-        <a href="/"><span>Home</span><small>使い方</small></a>
-        <a href="/dashboard"><span>Dashboard</span><small>全体</small></a>
-        <a href="/teams"><span>Teams</span><small>チーム</small></a>
-        <a href="/analytics"><span>Analytics</span><small>分析</small></a>
-        <a href="/trends"><span>Trends</span><small>推移</small></a>
-        <a href="/results"><span>Results</span><small>結果</small></a>
-      </nav>
-      <a class="headerCta" href="https://kjnine.com" rel="noreferrer" target="_blank">KJ9へ</a>
-      <button class="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
-        <span class="menuLine"></span>
-        <span class="menuLine"></span>
-        <span class="menuLine"></span>
-      </button>
-      <div class="mobileDrawer" id="mobile-drawer">
-        <div class="mobileDrawerTop">
-          <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
-          <span>Menu</span>
-        </div>
-        <nav class="mobileDrawerNav" aria-label="モバイルナビゲーション">
-          <a href="/"><span>01</span><strong>Home<small>使い方</small></strong></a>
-          <a href="/dashboard"><span>02</span><strong>Dashboard<small>全体</small></strong></a>
-          <a href="/teams"><span>03</span><strong>Teams<small>チーム</small></strong></a>
-          <a href="/rankings"><span>04</span><strong>Rankings<small>順位</small></strong></a>
-          <a href="/analytics"><span>05</span><strong>Analytics<small>分析</small></strong></a>
-          <a href="/trends"><span>06</span><strong>Trends<small>推移</small></strong></a>
-          <a href="/results"><span>07</span><strong>Results<small>結果</small></strong></a>
-          <a href="/terms"><span>08</span><strong>Terms<small>規約</small></strong></a>
-          <a href="/privacy"><span>09</span><strong>Privacy<small>方針</small></strong></a>
-        </nav>
-        <a class="mobileDrawerContact" href="https://kjnine.com" rel="noreferrer" target="_blank">KJ9サイトへ</a>
-      </div>
-    </header>
-
     <section class="legalHero">
       <p class="eyebrow">Terms / Disclaimer</p>
       <h1>利用規約・免責事項</h1>
@@ -58,7 +20,7 @@ const updatedAt = "2026年5月25日";
       <article class="legalBlock">
         <h2>本サイトの位置づけ</h2>
         <p>
-          本サイトはB.LEAGUE公式サイトではありません。B.LEAGUE、各クラブ、その他関連団体から公認・提携・後援を受けたものではありません。
+          本サイトはB.LEAGUE・JBAの公式サイトではありません。B.LEAGUE、JBA、各クラブ、各代表チーム、その他関連団体から公認・提携・後援を受けたものではありません。
         </p>
         <p>
           本サイトは、公開されている試合結果をもとに、独自に集計・可視化した非公式のデータ分析サイトです。
@@ -68,10 +30,10 @@ const updatedAt = "2026年5月25日";
       <article class="legalBlock">
         <h2>データについて</h2>
         <ul>
-          <li>本サイトでは、試合日、対戦カード、スコア、勝敗、得失点差、ホーム/アウェイ成績などを集計して表示します。</li>
+          <li>本サイトでは、Bリーグと男子日本代表戦の試合日、対戦カード、スコア、勝敗、シュート、リバウンド、アシストなどを集計して表示します。</li>
           <li>表示される勝率、総合指標、安定度、ホーム依存度などは本サイト独自の計算を含みます。</li>
           <li>データの正確性、完全性、最新性を保証するものではありません。</li>
-          <li>公式記録、日程、順位、成績は必ずB.LEAGUE公式サイトまたは各クラブの公式発表をご確認ください。</li>
+          <li>公式記録、日程、順位、成績は必ずB.LEAGUE、JBA、FIBAまたは各チームの公式発表をご確認ください。</li>
         </ul>
       </article>
 

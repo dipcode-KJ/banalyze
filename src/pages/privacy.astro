@@ -3,49 +3,11 @@ import SiteFooter from "../components/SiteFooter";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../components/StatsDashboard.css";
 
-const updatedAt = "2026年5月25日";
+const updatedAt = "2026年8月5日";
 ---
 
-<BaseLayout title="プライバシーポリシー | NINES DATA" description="NINES DATA ANALYZEのプライバシーポリシー、アクセスログ、Cookie、外部リンク、お問い合わせについて説明します。">
+<BaseLayout enableAds={false} title="プライバシーポリシー | NINES ANALYZE" description="NINES ANALYZEにおけるアクセスログ、Cookie、Google Analytics、広告配信、外部リンクの取り扱いについて説明します。">
   <main class="legalPage">
-    <header class="siteHeader">
-      <a class="brand" href="/">
-        <img alt="NINES ANALYZE" src="/nines_analyze_logo.svg" />
-      </a>
-      <nav class="siteNav" aria-label="主要ナビゲーション">
-        <a href="/"><span>Home</span><small>使い方</small></a>
-        <a href="/dashboard"><span>Dashboard</span><small>全体</small></a>
-        <a href="/teams"><span>Teams</span><small>チーム</small></a>
-        <a href="/analytics"><span>Analytics</span><small>分析</small></a>
-        <a href="/trends"><span>Trends</span><small>推移</small></a>
-        <a href="/results"><span>Results</span><small>結果</small></a>
-      </nav>
-      <a class="headerCta" href="https://kjnine.com" rel="noreferrer" target="_blank">KJ9へ</a>
-      <button class="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
-        <span class="menuLine"></span>
-        <span class="menuLine"></span>
-        <span class="menuLine"></span>
-      </button>
-      <div class="mobileDrawer" id="mobile-drawer">
-        <div class="mobileDrawerTop">
-          <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
-          <span>Menu</span>
-        </div>
-        <nav class="mobileDrawerNav" aria-label="モバイルナビゲーション">
-          <a href="/"><span>01</span><strong>Home<small>使い方</small></strong></a>
-          <a href="/dashboard"><span>02</span><strong>Dashboard<small>全体</small></strong></a>
-          <a href="/teams"><span>03</span><strong>Teams<small>チーム</small></strong></a>
-          <a href="/rankings"><span>04</span><strong>Rankings<small>順位</small></strong></a>
-          <a href="/analytics"><span>05</span><strong>Analytics<small>分析</small></strong></a>
-          <a href="/trends"><span>06</span><strong>Trends<small>推移</small></strong></a>
-          <a href="/results"><span>07</span><strong>Results<small>結果</small></strong></a>
-          <a href="/terms"><span>08</span><strong>Terms<small>規約</small></strong></a>
-          <a href="/privacy"><span>09</span><strong>Privacy<small>方針</small></strong></a>
-        </nav>
-        <a class="mobileDrawerContact" href="https://kjnine.com" rel="noreferrer" target="_blank">KJ9サイトへ</a>
-      </div>
-    </header>
-
     <section class="legalHero">
       <p class="eyebrow">Privacy Policy</p>
       <h1>プライバシーポリシー</h1>
@@ -84,6 +46,20 @@ const updatedAt = "2026年5月25日";
         </p>
         <p>
           ブラウザの設定によりCookieを無効化できますが、一部機能に影響する場合があります。
+        </p>
+      </article>
+
+      <article class="legalBlock">
+        <h2>広告配信について</h2>
+        <p>
+          本サイトでは、第三者配信の広告サービス「Google AdSense」を利用しています。Googleなどの第三者配信事業者は、Cookieを使用して、利用者が本サイトや他のサイトへアクセスした情報に基づく広告を配信する場合があります。
+        </p>
+        <p>
+          Googleによる広告Cookieの使用を無効にする方法や、広告配信におけるデータの取り扱いについては、Googleの
+          <a href="https://policies.google.com/technologies/ads?hl=ja" rel="noreferrer" target="_blank">広告ポリシー</a>
+          および
+          <a href="https://myadcenter.google.com/" rel="noreferrer" target="_blank">マイ アド センター</a>
+          をご確認ください。
         </p>
       </article>
 

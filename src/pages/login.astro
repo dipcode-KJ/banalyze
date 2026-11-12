@@ -1,0 +1,8 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MemberLogin from "../components/MemberLogin";
+---
+
+<BaseLayout title="予測ラボ ログイン | NINES ANALYZE" description="NINES ANALYZEのB.LEAGUE試合予測ラボにログインします。" robots="noindex, nofollow" enableAds={false}>
+  <MemberLogin client:load />
+</BaseLayout>

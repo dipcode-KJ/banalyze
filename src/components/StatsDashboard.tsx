@@ -9,32 +9,45 @@ import {
   Tooltip,
 } from "chart.js";
 import { useMemo, useState } from "react";
-import { Activity, ArrowRight, ArrowUpDown, CalendarRange, Database, Menu, TrendingUp } from "lucide-react";
+import { Activity, ArrowRight, ArrowUpDown, CalendarRange, Database, TrendingUp } from "lucide-react";
 import { Bar, Line } from "react-chartjs-2";
 import { pointDiff, seasonLabels, type SeasonKey, type TeamRecord, winRate } from "../data/mockStats";
 import { type DivisionFilter, useSeasonData, useSeasonSeries } from "../hooks/useSeasonData";
 import SiteFooter from "./SiteFooter";
 import "./StatsDashboard.css";
+import LeagueWebGL from "./LeagueWebGL";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend);
 
 const chartPalette = {
-  ink: "#10121d",
-  graphite: "#2f341c",
-  muted: "#e6edcc",
-  neon: "#d7ff00",
-  shade900: "#161d00",
-  shade700: "#334700",
-  shade500: "#5f8000",
-  shade300: "#92bd00",
-  shade100: "#c4ef00",
+  ink: "#0f172a",
+  graphite: "#334155",
+  muted: "#94a3b8",
+  neon: "#ff5722",
+  neonGlow: "rgba(255, 87, 34, 0.2)",
+  cyan: "#06b6d4",
+  cyanGlow: "rgba(6, 182, 212, 0.18)",
+  emerald: "#10b981",
+  gridLine: "rgba(15, 23, 42, 0.06)",
 };
 
-const shadeScale = ["#161d00", "#243200", "#334700", "#496300", "#5f8000", "#7fa800", "#a5d100", "#d7ff00"];
+const modernBarColors = [
+  "#ff5722",
+  "#ff6b35",
+  "#ff7f49",
+  "#ff935e",
+  "#ffa673",
+  "#3b82f6",
+  "#60a5fa",
+  "#06b6d4",
+  "#22d3ee",
+  "#64748b",
+  "#94a3b8",
+  "#cbd5e1",
+];
 
-const shadeByIndex = (index: number, total: number) => {
-  const scaleIndex = Math.min(shadeScale.length - 1, Math.floor((index / Math.max(1, total - 1)) * (shadeScale.length - 1)));
-  return shadeScale[scaleIndex];
+const barColorByIndex = (index: number) => {
+  return modernBarColors[index % modernBarColors.length];
 };
 
 const chartOptions = {
@@ -44,26 +57,52 @@ const chartOptions = {
   plugins: {
     legend: {
       labels: {
-        color: "#333333",
+        color: "#475569",
         boxWidth: 12,
+        font: {
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
+          weight: 600,
+          size: 12,
+        },
       },
+    },
+    tooltip: {
+      backgroundColor: "#0f172a",
+      titleColor: "#ffffff",
+      bodyColor: "#f1f5f9",
+      padding: 10,
+      cornerRadius: 8,
+      boxPadding: 4,
     },
   },
   scales: {
     x: {
-      ticks: { color: "#333333" },
+      ticks: {
+        color: "#64748b",
+        font: {
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
+          size: 11,
+          weight: 600,
+        },
+      },
       grid: { display: false },
     },
     y: {
-      ticks: { color: "#333333" },
-      grid: { color: "rgba(95, 128, 0, 0.18)" },
+      ticks: {
+        color: "#64748b",
+        font: {
+          family: "'Plus Jakarta Sans', 'Inter', sans-serif",
+          size: 11,
+        },
+      },
+      grid: { color: chartPalette.gridLine },
     },
   },
 };
 
 export default function StatsDashboard() {
-  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2025-26");
-  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("ALL");
+  const [selectedSeason, setSelectedSeason] = useState<SeasonKey>("2026-27");
+  const [selectedDivision, setSelectedDivision] = useState<DivisionFilter>("B.PREMIER");
   const { teams, source } = useSeasonData(selectedSeason, selectedDivision);
   const { series } = useSeasonSeries(selectedDivision);
 
@@ -71,7 +110,7 @@ export default function StatsDashboard() {
   const chartTeams = sortedTeams.slice(0, 12);
   const leader = sortedTeams[0] ?? emptyTeam(selectedDivision);
   const totalGames = teams.reduce((sum, team) => sum + team.wins + team.losses, 0) / 2;
-  const avgPoints = teams.length > 0 ? Math.round(teams.reduce((sum, team) => sum + team.pointsFor, 0) / teams.length) : 0;
+  const avgPoints = totalGames > 0 ? Math.round(teams.reduce((sum, team) => sum + team.pointsFor, 0) / (totalGames * 2)) : 0;
   const leaderHistory = [...seasonLabels]
     .reverse()
     .map((label) => {
@@ -83,12 +122,12 @@ export default function StatsDashboard() {
     labels: chartTeams.map((team) => team.shortName),
     datasets: [
       {
-        label: "勝率",
+        label: "勝率 (%)",
         data: chartTeams.map((team) => Number((winRate(team) * 100).toFixed(1))),
-        backgroundColor: chartTeams.map((_, index) => (index === 0 ? chartPalette.neon : shadeByIndex(index, chartTeams.length))),
-        borderColor: chartPalette.ink,
-        borderWidth: 1,
-        borderRadius: 0,
+        backgroundColor: chartTeams.map((_, index) => barColorByIndex(index)),
+        borderColor: "transparent",
+        borderWidth: 0,
+        borderRadius: 6,
       },
     ],
   };
@@ -99,12 +138,14 @@ export default function StatsDashboard() {
       {
         label: "得失点差",
         data: chartTeams.map(pointDiff),
-        borderColor: chartPalette.shade500,
-        backgroundColor: "rgba(95, 128, 0, 0.16)",
+        borderColor: chartPalette.neon,
+        backgroundColor: chartPalette.neonGlow,
+        fill: true,
         tension: 0.35,
         pointRadius: 5,
+        pointHoverRadius: 7,
         pointBorderWidth: 2,
-        pointBorderColor: chartPalette.ink,
+        pointBorderColor: "#ffffff",
         pointBackgroundColor: chartPalette.neon,
       },
     ],
@@ -114,53 +155,32 @@ export default function StatsDashboard() {
     labels: [...seasonLabels].reverse(),
     datasets: [
       {
-        label: `${leader.shortName} 勝率`,
+        label: `${leader.shortName} 勝率推移 (%)`,
         data: leaderHistory,
-        borderColor: chartPalette.ink,
-        backgroundColor: "rgba(215, 255, 0, 0.16)",
+        borderColor: chartPalette.cyan,
+        backgroundColor: chartPalette.cyanGlow,
+        fill: true,
         tension: 0.35,
         pointRadius: 6,
+        pointHoverRadius: 8,
         pointBorderWidth: 2,
-        pointBorderColor: chartPalette.ink,
-        pointBackgroundColor: chartPalette.neon,
+        pointBorderColor: "#ffffff",
+        pointBackgroundColor: chartPalette.cyan,
       },
     ],
   };
 
   return (
     <main className="dashboard">
-      <header className="siteHeader">
-        <a className="brand" href="/">
-          <img alt="NINES ANALYZE" src="/nines_analyze_logo.svg" />
-        </a>
-        <nav className="siteNav" aria-label="主要ナビゲーション">
-          <a href="/"><span>Home</span><small>使い方</small></a>
-          <a href="/dashboard"><span>Dashboard</span><small>全体</small></a>
-          <a href="/teams"><span>Teams</span><small>チーム</small></a>
-          <a href="/rankings"><span>Rankings</span><small>順位</small></a>
-          <a href="/analytics"><span>Analytics</span><small>分析</small></a>
-          <a href="/trends"><span>Trends</span><small>推移</small></a>
-          <a href="/results"><span>Results</span><small>結果</small></a>
-        </nav>
-        <a className="headerCta" href="https://kjnine.com" rel="noreferrer" target="_blank">
-          KJ9へ
-          <ArrowRight size={14} />
-        </a>
-        <button className="menuButton" aria-controls="mobile-drawer" aria-expanded="false" aria-label="メニュー" type="button">
-          <Menu size={22} />
-        </button>
-        <MobileDrawer />
-      </header>
-
       <section className="hero">
         <div className="heroText" id="overview">
           <p className="eyebrow">B.LEAGUE DATA LAB</p>
           <h1>
-            <span>Bリーグ成績を</span>
-            <span>シーズン別に追う。</span>
+            <span>リーグの現在地を</span>
+            <span>数字でつかむ。</span>
           </h1>
           <p>
-            試合結果を収集し、現行シーズンから過去シーズンまで勝率・得失点差・対戦傾向を可視化します。
+            {selectedSeason} / {selectedDivision} の勝率、得失点差、直近フォームを同じ画面で比較。気になる数字からチームの強さを読み解きます。
           </p>
           <div className="seasonSwitch" aria-label="シーズン選択">
             {seasonLabels.map((label) => (
@@ -175,7 +195,7 @@ export default function StatsDashboard() {
               </button>
             ))}
           </div>
-          <DivisionSwitch activeDivision={selectedDivision} onDivisionChange={setSelectedDivision} />
+          <DivisionSwitch activeSeason={selectedSeason} activeDivision={selectedDivision} onDivisionChange={setSelectedDivision} />
           <div className="heroActions">
             <a className="primaryAction" href="#charts">
               グラフを見る
@@ -188,35 +208,11 @@ export default function StatsDashboard() {
           </div>
         </div>
 
-        <div className="heroVisual" aria-label="データプレビュー">
-          <svg className="deco decoSmiley" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-            <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="5" />
-            <circle cx="35" cy="42" r="6" fill="currentColor" />
-            <circle cx="65" cy="42" r="6" fill="currentColor" />
-            <path d="M30 62 Q50 78 70 62" stroke="currentColor" strokeWidth="5" fill="none" strokeLinecap="round" />
-          </svg>
-          <svg className="deco decoCrown" viewBox="0 0 120 80" fill="none" aria-hidden="true">
-            <path d="M10 70 L10 30 L35 50 L60 10 L85 50 L110 30 L110 70 Z" stroke="currentColor" strokeWidth="4" fill="none" />
-          </svg>
-          <div className="phoneMock">
-            <div className="phoneScreen">
-              <div className="phoneTop">
-                <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
-                <span>{selectedSeason} / {selectedDivision}</span>
-              </div>
-              <p className="phoneLabel">WIN RATE LEADER</p>
-              <h2>{leader.shortName}</h2>
-              <strong>{(winRate(leader) * 100).toFixed(1)}%</strong>
-              <div className="miniBars">
-                {sortedTeams.slice(0, 5).map((team) => (
-                  <span key={team.id} style={{ height: `${Math.max(26, winRate(team) * 100)}%` }} title={team.shortName} />
-                ))}
-              </div>
-              <div className="phoneMeta">
-                <span>{totalGames} Games</span>
-                <span>{pointDiff(leader)} Margin</span>
-              </div>
-            </div>
+        <div className="heroVisual" aria-label="勝率と得失点差のデータ可視化">
+          <div className="heroDataStage">
+            <div className="heroDataStageHeader"><span>LIVE STANDINGS</span><strong>{selectedSeason} / {selectedDivision}</strong></div>
+            <LeagueWebGL teams={sortedTeams.slice(0, 8).map((team) => ({ name: team.shortName, winRate: winRate(team), margin: pointDiff(team) }))} />
+            <div className="heroDataStageFooter"><span><b>{leader.shortName}</b> 現在の勝率トップ</span><span>得失点差 <b>{pointDiff(leader) > 0 ? "+" : ""}{pointDiff(leader)}</b></span></div>
           </div>
         </div>
       </section>
@@ -224,7 +220,7 @@ export default function StatsDashboard() {
       <section className="metricGrid" aria-label="主要指標">
         <Metric icon={<TrendingUp size={18} />} label="最高勝率" value={`${(winRate(leader) * 100).toFixed(1)}%`} />
         <Metric icon={<Activity size={18} />} label="対象試合" value={`${totalGames}試合`} />
-        <Metric icon={<ArrowUpDown size={18} />} label="平均得点" value={`${avgPoints}点`} />
+        <Metric icon={<ArrowUpDown size={18} />} label="1試合平均得点" value={`${avgPoints}点`} />
         <Metric icon={<CalendarRange size={18} />} label="データ" value={source === "db" ? "DB/API" : source === "loading" ? "確認中" : selectedSeason} />
       </section>
 
@@ -350,42 +346,20 @@ export default function StatsDashboard() {
   );
 }
 
-function MobileDrawer() {
-  return (
-    <div className="mobileDrawer" id="mobile-drawer">
-      <div className="mobileDrawerTop">
-        <img alt="NINES ANALYZE" src="/nines_analyze_logo_wht.svg" />
-        <span>Menu</span>
-      </div>
-      <nav className="mobileDrawerNav" aria-label="モバイルナビゲーション">
-        <a href="/"><span>01</span><strong>Home<small>使い方</small></strong></a>
-        <a href="/dashboard"><span>02</span><strong>Dashboard<small>全体</small></strong></a>
-        <a href="/teams"><span>03</span><strong>Teams<small>チーム</small></strong></a>
-        <a href="/rankings"><span>04</span><strong>Rankings<small>順位</small></strong></a>
-        <a href="/analytics"><span>05</span><strong>Analytics<small>分析</small></strong></a>
-        <a href="/trends"><span>06</span><strong>Trends<small>推移</small></strong></a>
-        <a href="/results"><span>07</span><strong>Results<small>結果</small></strong></a>
-        <a href="/terms"><span>08</span><strong>Terms<small>規約</small></strong></a>
-        <a href="/privacy"><span>09</span><strong>Privacy<small>方針</small></strong></a>
-      </nav>
-      <a className="mobileDrawerContact" href="https://kjnine.com" rel="noreferrer" target="_blank">
-        KJ9サイトへ
-        <ArrowRight size={18} />
-      </a>
-    </div>
-  );
-}
-
 function DivisionSwitch({
+  activeSeason,
   activeDivision,
   onDivisionChange,
 }: {
+  activeSeason: SeasonKey;
   activeDivision: DivisionFilter;
   onDivisionChange: (division: DivisionFilter) => void;
 }) {
+  const divisionOptions = (activeSeason === "2026-27" ? ["ALL", "B.PREMIER", "B.ONE", "B.NEXT"] : ["ALL", "B1", "B2"]) as DivisionFilter[];
+
   return (
     <div className="divisionSwitch" aria-label="ディビジョン選択">
-      {(["ALL", "B1", "B2"] as DivisionFilter[]).map((division) => (
+      {divisionOptions.map((division) => (
         <button
           aria-pressed={activeDivision === division}
           className={activeDivision === division ? "active" : ""}

@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../api/db.php';
+$root = getenv('NINES_ROOT') ?: dirname(__DIR__);
+require rtrim($root, '/') . '/api/db.php';
 
 // Imports team advanced averages from B.LEAGUE club_detail pages.
 // Usage:
@@ -98,7 +99,7 @@ function extract_average_rows(string $html, string $season): array
         if (
             count($cells) < 29 ||
             $cells[0] !== $season ||
-            !in_array($cells[1], ['B1', 'B2'], true) ||
+            !in_array($cells[1], ['B1', 'B2', 'BP', 'BO', 'BN', 'B.PREMIER', 'B.ONE', 'B.NEXT'], true) ||
             !str_contains($cells[28], ':')
         ) {
             continue;
@@ -120,7 +121,7 @@ function extract_average_rows(string $html, string $season): array
             : null;
 
         $rows[] = [
-            'division' => $cells[1],
+            'division' => map_official_division($cells[1]),
             'assists' => $assists,
             'turnovers' => $turnovers,
             'total_rebounds' => $totalRebounds,
@@ -136,13 +137,23 @@ function extract_average_rows(string $html, string $season): array
     return $rows;
 }
 
+function map_official_division(string $value): string
+{
+    return match ($value) {
+        'BP' => 'B.PREMIER',
+        'BO' => 'B.ONE',
+        'BN' => 'B.NEXT',
+        default => $value,
+    };
+}
+
 function find_team_id(PDO $pdo, string $teamName, string $division): ?int
 {
     $localName = official_to_local_team_name($teamName);
     $stmt = $pdo->prepare(<<<SQL
 SELECT id
 FROM teams
-WHERE division = :division
+    WHERE division = :division
   AND (name = :name OR short_name = :name)
 LIMIT 1
 SQL);
@@ -261,17 +272,23 @@ function normalize_text(string $text): string
 
 function http_get(string $url): string
 {
-    $context = stream_context_create([
-        'http' => [
-            'header' => "User-Agent: NINES-DATA-ANALYZE/0.1\r\n",
-            'timeout' => 20,
-        ],
-    ]);
-
-    $body = @file_get_contents($url, false, $context);
-    if ($body === false) {
-        throw new RuntimeException("Failed to fetch {$url}");
+    $lastError = 'unknown error';
+    for ($attempt = 1; $attempt <= 4; $attempt++) {
+        $context = stream_context_create([
+            'http' => [
+                'header' => "User-Agent: NINES-DATA-ANALYZE/0.1\r\n",
+                'timeout' => 30,
+            ],
+        ]);
+        $body = @file_get_contents($url, false, $context);
+        if ($body !== false) {
+            return $body;
+        }
+        $lastError = error_get_last()['message'] ?? $lastError;
+        if ($attempt < 4) {
+            sleep($attempt * 2);
+        }
     }
 
-    return $body;
+    throw new RuntimeException("Failed to fetch {$url} ({$lastError})");
 }

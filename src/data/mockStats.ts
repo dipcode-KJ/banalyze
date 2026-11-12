@@ -1,4 +1,4 @@
-export type SeasonKey = "2025-26" | "2024-25" | "2023-24" | "2022-23";
+export type SeasonKey = "2026-27" | "2025-26" | "2024-25" | "2023-24" | "2022-23";
 
 export type TeamRecord = {
   id: string;
@@ -204,6 +204,11 @@ const games2026: GameResult[] = [
 ];
 
 export const seasons: SeasonDataset[] = [
+  {
+    label: "2026-27",
+    teams: currentTeams.map((team) => ({ ...team, wins: 0, losses: 0, pointsFor: 0, pointsAgainst: 0, homeWins: 0, homeLosses: 0, awayWins: 0, awayLosses: 0, lastFive: [] })),
+    recentGames: [],
+  },
   {
     label: "2025-26",
     teams: currentTeams,
