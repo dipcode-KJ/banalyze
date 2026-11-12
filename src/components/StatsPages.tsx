@@ -1453,7 +1453,9 @@ export function ResultsPage() {
             <div>
               <span>{game.home}</span>
               <strong>
-                {game.homeScore} - {game.awayScore}
+                {game.homeScore != null && game.awayScore != null
+                  ? `${game.homeScore} - ${game.awayScore}`
+                  : "19:05"}
               </strong>
               <span>{game.away}</span>
             </div>

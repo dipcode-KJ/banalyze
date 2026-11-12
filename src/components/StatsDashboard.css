@@ -2719,12 +2719,19 @@ td:first-child {
 }
 
 .resultCard strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
   background: var(--color-neon);
-  font-size: 2rem;
-  font-style: italic;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 20px;
+  font-style: normal;
   font-weight: 900;
-  padding: 2px 8px;
+  padding: 6px 14px;
+  min-width: 80px;
+  letter-spacing: 0.04em;
 }
 
 .noticeBand {
@@ -4737,12 +4744,15 @@ td.negative {
 
 .analysisCards strong {
   display: block;
+  background: transparent !important;
   font-size: 32px;
   font-weight: 950;
+  font-style: normal;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   color: var(--color-neon);
   margin-block: 8px;
+  padding: 0;
 }
 
 .analysisCards p {
@@ -4890,10 +4900,18 @@ td.negative {
 }
 
 .resultCard strong {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 950;
   font-variant-numeric: tabular-nums;
-  color: var(--color-neon);
+  color: #ffffff;
+  background: var(--color-neon);
+  border-radius: 8px;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  letter-spacing: 0.04em;
 }
 
 /* --------------------------------------------------------------------------
